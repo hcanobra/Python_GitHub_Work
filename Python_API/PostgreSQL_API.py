@@ -26,7 +26,7 @@ class Connection:
     # Setup the connection. Username and password optional. If not supplied, will be asked for later on
     def __init__(self,v_databasae):
 
-        self.engine = create_engine("postgresql+psycopg2://postgres:Tpztlan02VH@localhost/%s"%v_databasae)
+        self.engine = create_engine("postgresql+psycopg2://canobhu:Tpztlan02VH@10.136.233.31/%s"%v_databasae)
 
 
     # Execute query
