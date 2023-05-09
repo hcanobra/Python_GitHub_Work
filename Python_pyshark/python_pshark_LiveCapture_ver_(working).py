@@ -32,7 +32,7 @@ def func1():
     v_host = "15.181.163.0"
 
     try:
-        capture.sniff(packet_count=1000)
+        capture.sniff(packet_count=10)
         func2()
 
     except KeyboardInterrupt:
