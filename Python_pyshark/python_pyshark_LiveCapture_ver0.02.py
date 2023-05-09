@@ -32,7 +32,7 @@ def func1():
     v_host = "15.181.163.0"
 
     try:
-        capture.sniff(packet_count=1000)
+        capture.sniff(packet_count=20)
         func2()
 
     except KeyboardInterrupt:
@@ -65,6 +65,8 @@ def func2():
     except KeyboardInterrupt:
         print ('Func2: finishing')
         pass
+    
+
 
 if __name__ == '__main__':
     try:
