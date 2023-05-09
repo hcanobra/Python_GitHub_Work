@@ -1,0 +1,15 @@
+https://www.gpsvisualizer.com/geocoder/
+
+https://www.gpsvisualizer.com/map_input
+
+
+login: hcanobra
+pass: tigger
+https://developer.mapquest.com/user/me/apps
+
+
+GPS_Visualizer’s Keys
+Consumer Key	FAvddxb5EOxEiAHY9AIk9tgWstcfqcKI
+Consumer Secret	OxJDCuKeiNzvHR3G
+Key Issued	Thu, 02/24/2022 - 09:00
+Key Expires	Never
