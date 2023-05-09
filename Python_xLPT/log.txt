@@ -1,0 +1,3910 @@
+################################################################################
+################################################################################
+### 2022-06-13 13:23:03.609788
+### 1) Extracting data from 5G xLPT ....
+##### Jun_13_2022 : Importing xLPT 5G Report
+          DAY  ... 5GNR_InterSgnb_pScell_ResAlloc_Failure_%
+0  06/12/2022  ...                                      0.0
+1  06/12/2022  ...                                      0.0
+2  06/12/2022  ...                                      0.0
+3  06/12/2022  ...                                      0.0
+4  06/12/2022  ...                                      0.0
+
+[5 rows x 73 columns]
+##### 2022-06-13 13:24:15.574985 : Completed import 5Gx LPT
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-13 13:24:15.694216
+### Inserting values in PostgreSQL table: 
+### 2022-06-13 13:24:43.821925
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-14 04:30:03.505774
+### 1) Extracting data from 5G xLPT ....
+##### Jun_14_2022 : Importing xLPT 5G Report
+          DAY  ... 5GNR_InterSgnb_pScell_ResAlloc_Failure_%
+0  06/13/2022  ...                                      0.0
+1  06/13/2022  ...                                      0.0
+2  06/13/2022  ...                                      0.0
+3  06/13/2022  ...                                      0.0
+4  06/13/2022  ...                                      0.0
+
+[5 rows x 73 columns]
+##### 2022-06-14 04:31:20.843977 : Completed import 5Gx LPT
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-14 04:31:21.100766
+### Inserting values in PostgreSQL table: 
+### 2022-06-14 04:31:50.128262
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-14 05:00:03.000107
+### 1) Extracting data from xLPT ....
+### Jun_14_2022 : Importing xLPT Report
+          DAY HR  ... RRC_Reest_Succ_%_QCI_5 RRC_Reest_Succ_%_QCI_1
+0  06/13/2022  0  ...                    0.0                    0.0
+1  06/13/2022  0  ...                  100.0                    0.0
+2  06/13/2022  0  ...                  100.0                    0.0
+3  06/13/2022  0  ...                  100.0                    0.0
+4  06/13/2022  0  ...                  100.0                    0.0
+
+[5 rows x 190 columns]
+### 2022-06-14 05:36:49.281862
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-14 05:36:49.616834
+### Inserting values in PostgreSQL table: 
+### 2022-06-14 05:43:00.882352
+################################################################################
+################################################################################
+########## Jun_14_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+  Projects_Fuze_project_id  ... Projects_trans_dt
+0                  2566906  ...        2022-06-13
+1                 16386823  ...        2022-06-13
+2                 16906051  ...        2022-06-13
+3                 16729625  ...        2022-06-13
+4                 15757359  ...        2022-06-13
+
+[5 rows x 29 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dash_view 
+
+                    
+  Dashboar_Fuze_project_id  ... Dashboar_C_Band_bucket
+0                 15672749  ...                   None
+1                  2192365  ...                   None
+2                 15033163  ...                   None
+3                  2587589  ...                   None
+4                 16282482  ...                   None
+
+[5 rows x 11 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dates_view
+
+                    
+  Date_Fuze_project_id  ... Date_inservice_forecast_date
+0             16148115  ...                   2024-08-01
+1              2501002  ...                         None
+2             16188329  ...                   2020-07-30
+3              2553755  ...                   2019-02-01
+4             16741330  ...                   2022-03-15
+
+[5 rows x 8 columns]
+########## Jun_14_2022 : Generating Geo location for QGIS from Fuze information
+Processing MySQL Query...  
+                    SELECT 
+                        * 
+                    FROM public.vzw_fuze_proj
+                    WHERE 
+                        (
+                            "Projects_atoll_site_latitude" is NOT Null
+                            OR
+                            "Projects_sarf_latitude" is NOT Null
+                        )
+                        AND
+                        (
+                            "Projects_atoll_site_longitude" is NOT Null
+                            OR
+                            "Projects_sarf_longitude" is NOT Null
+                        )
+                        
+                    
+Creating geo locations... 
+Processing MySQL Query Creating Table...  
+    
+                            BEGIN;
+                            DROP TABLE IF EXISTS public.vzw_fuze_qgis;
+
+                            CREATE TABLE public.vzw_fuze_qgis as
+                            SELECT 
+                                FLOC."Projects_Fuze_project_id",
+                                FLOC."Projects_parent_solution_id",
+                                FLOC."Projects_site_info_id",
+                                FLOC."lat",
+                                FLOC."lon",
+                                FLOC."geometry",
+
+                                FPRO."Projects_local_market",
+                                FPRO."Projects_name",
+                                FPRO."Projects_Site_name",
+                                FPRO."Projects_Status",
+                                FPRO."Projects_project_scope",
+                                FPRO."Projects_trans_contr_bandwidth",
+                                FPRO."Projects_plan_year",
+                                FPRO."Projects_por",
+                                FPRO."Projects_pl_initiative",
+                                FPRO."Projects_pl_rationale",
+                                FPRO."Projects_proj_category",
+                                FPRO."Projects_pslc",
+                                FPRO."Projects_Subtype",
+                                FPRO."Projects_rf_rank",
+                                FPRO."Projects_modification_type",
+                                FPRO."Projects_type",
+                                FPRO."Projects_site_type",
+                                FPRO."Projects_activation_forecast_date",
+                                EXTRACT (MONTH FROM to_date (FPRO."Projects_activation_forecast_date", 'mm/dd/yyyy')) as "Projects_Activation_Month",
+
+
+
+                                FDSH."Dashboar_Status",
+                                FDSH."Dashboar_RF_Rank",
+                                FDSH."Dashboar_Flagged_Project",
+                                FDSH."Dashboar_Project_subtype",
+                                FDSH."Dashboar_Ready_to_Construct_F",
+                                FDSH."Dashboar_Ready_to_Construct_A",
+                                FDSH."Dashboar_PM_Project_Manager_Group",
+                                FDSH."Dashboar_C_Band_bucket"
+
+                            FROM public.vzw_fuze_loc FLOC
+                            LEFT JOIN public.vzw_fuze_proj FPRO ON FLOC."Projects_Fuze_project_id" = FPRO."Projects_Fuze_project_id"
+                            LEFT JOIN public.vzw_fuze_dash FDSH ON FLOC."Projects_Fuze_project_id" = FDSH."Dashboar_Fuze_project_id"
+                            WHERE "Projects_local_market" IN ('Salt Lake City','Helena','Boise')
+                            ;
+                            COMMIT;
+                    
+################################################################################
+################################################################################
+### 2022-06-15 04:30:07.951171
+### 1) Extracting data from 5G xLPT ....
+##### Jun_15_2022 : Importing xLPT 5G Report
+          DAY  ... 5GNR_InterSgnb_pScell_ResAlloc_Failure_%
+0  06/14/2022  ...                                      0.0
+1  06/14/2022  ...                                      0.0
+2  06/14/2022  ...                                      0.0
+3  06/14/2022  ...                                      0.0
+4  06/14/2022  ...                                      0.0
+
+[5 rows x 73 columns]
+##### 2022-06-15 04:31:23.402001 : Completed import 5Gx LPT
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-15 04:31:24.140640
+### Inserting values in PostgreSQL table: 
+### 2022-06-15 04:31:50.463381
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-15 05:00:03.893071
+### 1) Extracting data from xLPT ....
+### Jun_15_2022 : Importing xLPT Report
+          DAY HR  ... RRC_Reest_Succ_%_QCI_5 RRC_Reest_Succ_%_QCI_1
+0  06/14/2022  0  ...                  100.0                    0.0
+1  06/14/2022  0  ...                  100.0                    0.0
+2  06/14/2022  0  ...                  100.0                    0.0
+3  06/14/2022  0  ...                  100.0                    0.0
+4  06/14/2022  0  ...                  100.0                    0.0
+
+[5 rows x 190 columns]
+### 2022-06-15 05:39:53.864861
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-15 05:39:54.156893
+### Inserting values in PostgreSQL table: 
+### 2022-06-15 05:45:51.799067
+################################################################################
+################################################################################
+########## Jun_15_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+  Projects_Fuze_project_id  ... Projects_trans_dt
+0                 16906051  ...        2022-06-14
+1                  2566906  ...        2022-06-14
+2                 16386823  ...        2022-06-14
+3                 16729625  ...        2022-06-14
+4                 15757359  ...        2022-06-14
+
+[5 rows x 29 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dash_view 
+
+                    
+  Dashboar_Fuze_project_id  ... Dashboar_C_Band_bucket
+0                  2435256  ...                   None
+1                  2199855  ...                   None
+2                 16261797  ...                   None
+3                  2199259  ...                   None
+4                  2195939  ...                   None
+
+[5 rows x 11 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dates_view
+
+                    
+  Date_Fuze_project_id  ... Date_inservice_forecast_date
+0             16342701  ...                         None
+1             16342711  ...                         None
+2             16343283  ...                         None
+3             16330404  ...                         None
+4             16292089  ...                   2020-12-21
+
+[5 rows x 8 columns]
+########## Jun_15_2022 : Generating Geo location for QGIS from Fuze information
+Processing MySQL Query...  
+                    SELECT 
+                        * 
+                    FROM public.vzw_fuze_proj
+                    WHERE 
+                        (
+                            "Projects_atoll_site_latitude" is NOT Null
+                            OR
+                            "Projects_sarf_latitude" is NOT Null
+                        )
+                        AND
+                        (
+                            "Projects_atoll_site_longitude" is NOT Null
+                            OR
+                            "Projects_sarf_longitude" is NOT Null
+                        )
+                        
+                    
+Creating geo locations... 
+Processing MySQL Query Creating Table...  
+    
+                            BEGIN;
+                            DROP TABLE IF EXISTS public.vzw_fuze_qgis;
+
+                            CREATE TABLE public.vzw_fuze_qgis as
+                            SELECT 
+                                FLOC."Projects_Fuze_project_id",
+                                FLOC."Projects_parent_solution_id",
+                                FLOC."Projects_site_info_id",
+                                FLOC."lat",
+                                FLOC."lon",
+                                FLOC."geometry",
+
+                                FPRO."Projects_local_market",
+                                FPRO."Projects_name",
+                                FPRO."Projects_Site_name",
+                                FPRO."Projects_Status",
+                                FPRO."Projects_project_scope",
+                                FPRO."Projects_trans_contr_bandwidth",
+                                FPRO."Projects_plan_year",
+                                FPRO."Projects_por",
+                                FPRO."Projects_pl_initiative",
+                                FPRO."Projects_pl_rationale",
+                                FPRO."Projects_proj_category",
+                                FPRO."Projects_pslc",
+                                FPRO."Projects_Subtype",
+                                FPRO."Projects_rf_rank",
+                                FPRO."Projects_modification_type",
+                                FPRO."Projects_type",
+                                FPRO."Projects_site_type",
+                                FPRO."Projects_activation_forecast_date",
+                                EXTRACT (MONTH FROM to_date (FPRO."Projects_activation_forecast_date", 'mm/dd/yyyy')) as "Projects_Activation_Month",
+
+
+
+                                FDSH."Dashboar_Status",
+                                FDSH."Dashboar_RF_Rank",
+                                FDSH."Dashboar_Flagged_Project",
+                                FDSH."Dashboar_Project_subtype",
+                                FDSH."Dashboar_Ready_to_Construct_F",
+                                FDSH."Dashboar_Ready_to_Construct_A",
+                                FDSH."Dashboar_PM_Project_Manager_Group",
+                                FDSH."Dashboar_C_Band_bucket"
+
+                            FROM public.vzw_fuze_loc FLOC
+                            LEFT JOIN public.vzw_fuze_proj FPRO ON FLOC."Projects_Fuze_project_id" = FPRO."Projects_Fuze_project_id"
+                            LEFT JOIN public.vzw_fuze_dash FDSH ON FLOC."Projects_Fuze_project_id" = FDSH."Dashboar_Fuze_project_id"
+                            WHERE "Projects_local_market" IN ('Salt Lake City','Helena','Boise')
+                            ;
+                            COMMIT;
+                    
+################################################################################
+################################################################################
+### 2022-06-17 04:30:07.003954
+### 1) Extracting data from 5G xLPT ....
+##### Jun_17_2022 : Importing xLPT 5G Report
+          DAY  ... 5GNR_InterSgnb_pScell_ResAlloc_Failure_%
+0  06/16/2022  ...                                      0.0
+1  06/16/2022  ...                                      0.0
+2  06/16/2022  ...                                      0.0
+3  06/16/2022  ...                                      0.0
+4  06/16/2022  ...                                      0.0
+
+[5 rows x 73 columns]
+##### 2022-06-17 04:31:13.427758 : Completed import 5Gx LPT
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-17 04:31:13.711801
+### Inserting values in PostgreSQL table: 
+### 2022-06-17 04:31:40.756143
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-17 05:00:02.789628
+### 1) Extracting data from xLPT ....
+### Jun_17_2022 : Importing xLPT Report
+          DAY HR  ... RRC_Reest_Succ_%_QCI_5 RRC_Reest_Succ_%_QCI_1
+0  06/16/2022  0  ...                  100.0                    0.0
+1  06/16/2022  0  ...                  100.0                    0.0
+2  06/16/2022  0  ...                  100.0                    0.0
+3  06/16/2022  0  ...                  100.0                    0.0
+4  06/16/2022  0  ...                  100.0                    0.0
+
+[5 rows x 190 columns]
+### 2022-06-17 05:31:20.745778
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-17 05:31:21.010131
+### Inserting values in PostgreSQL table: 
+### 2022-06-17 05:37:18.777794
+################################################################################
+################################################################################
+########## Jun_17_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+  Projects_Fuze_project_id  ... Projects_trans_dt
+0                 16386823  ...        2022-06-17
+1                  2566906  ...        2022-06-17
+2                 16906051  ...        2022-06-17
+3                 16729625  ...        2022-06-17
+4                 15757359  ...        2022-06-17
+
+[5 rows x 29 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dash_view 
+
+                    
+  Dashboar_Fuze_project_id  ... Dashboar_C_Band_bucket
+0                 16270629  ...                   None
+1                 16870799  ...                   None
+2                 16230881  ...                   None
+3                 15746085  ...                   None
+4                  2501770  ...                   None
+
+[5 rows x 11 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dates_view
+
+                    
+  Date_Fuze_project_id  ... Date_inservice_forecast_date
+0             15249455  ...                   2020-04-30
+1             15311795  ...                   2034-01-15
+2             16606647  ...                         None
+3             15252699  ...                   2019-10-01
+4             15743277  ...                   2015-06-17
+
+[5 rows x 8 columns]
+########## Jun_17_2022 : Generating Geo location for QGIS from Fuze information
+Processing MySQL Query...  
+                    SELECT 
+                        * 
+                    FROM public.vzw_fuze_proj
+                    WHERE 
+                        (
+                            "Projects_atoll_site_latitude" is NOT Null
+                            OR
+                            "Projects_sarf_latitude" is NOT Null
+                        )
+                        AND
+                        (
+                            "Projects_atoll_site_longitude" is NOT Null
+                            OR
+                            "Projects_sarf_longitude" is NOT Null
+                        )
+                        
+                    
+Creating geo locations... 
+Processing MySQL Query Creating Table...  
+    
+                            BEGIN;
+                            DROP TABLE IF EXISTS public.vzw_fuze_qgis;
+
+                            CREATE TABLE public.vzw_fuze_qgis as
+                            SELECT 
+                                FLOC."Projects_Fuze_project_id",
+                                FLOC."Projects_parent_solution_id",
+                                FLOC."Projects_site_info_id",
+                                FLOC."lat",
+                                FLOC."lon",
+                                FLOC."geometry",
+
+                                FPRO."Projects_local_market",
+                                FPRO."Projects_name",
+                                FPRO."Projects_Site_name",
+                                FPRO."Projects_Status",
+                                FPRO."Projects_project_scope",
+                                FPRO."Projects_trans_contr_bandwidth",
+                                FPRO."Projects_plan_year",
+                                FPRO."Projects_por",
+                                FPRO."Projects_pl_initiative",
+                                FPRO."Projects_pl_rationale",
+                                FPRO."Projects_proj_category",
+                                FPRO."Projects_pslc",
+                                FPRO."Projects_Subtype",
+                                FPRO."Projects_rf_rank",
+                                FPRO."Projects_modification_type",
+                                FPRO."Projects_type",
+                                FPRO."Projects_site_type",
+                                FPRO."Projects_activation_forecast_date",
+                                EXTRACT (MONTH FROM to_date (FPRO."Projects_activation_forecast_date", 'mm/dd/yyyy')) as "Projects_Activation_Month",
+
+
+
+                                FDSH."Dashboar_Status",
+                                FDSH."Dashboar_RF_Rank",
+                                FDSH."Dashboar_Flagged_Project",
+                                FDSH."Dashboar_Project_subtype",
+                                FDSH."Dashboar_Ready_to_Construct_F",
+                                FDSH."Dashboar_Ready_to_Construct_A",
+                                FDSH."Dashboar_PM_Project_Manager_Group",
+                                FDSH."Dashboar_C_Band_bucket"
+
+                            FROM public.vzw_fuze_loc FLOC
+                            LEFT JOIN public.vzw_fuze_proj FPRO ON FLOC."Projects_Fuze_project_id" = FPRO."Projects_Fuze_project_id"
+                            LEFT JOIN public.vzw_fuze_dash FDSH ON FLOC."Projects_Fuze_project_id" = FDSH."Dashboar_Fuze_project_id"
+                            WHERE "Projects_local_market" IN ('Salt Lake City','Helena','Boise')
+                            ;
+                            COMMIT;
+                    
+################################################################################
+################################################################################
+### 2022-06-18 04:30:03.234368
+### 1) Extracting data from 5G xLPT ....
+################################################################################
+################################################################################
+### 2022-06-18 05:00:03.571402
+### 1) Extracting data from xLPT ....
+### Jun_18_2022 : Importing xLPT Report
+          DAY HR  ... RRC_Reest_Succ_%_QCI_5 RRC_Reest_Succ_%_QCI_1
+0  06/17/2022  0  ...                   0.00                    0.0
+1  06/17/2022  0  ...                   0.00                    0.0
+2  06/17/2022  0  ...                  98.41                    0.0
+3  06/17/2022  0  ...                 100.00                    0.0
+4  06/17/2022  0  ...                   0.00                    0.0
+
+[5 rows x 190 columns]
+### 2022-06-18 05:34:26.235969
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-18 05:34:26.451155
+### Inserting values in PostgreSQL table: 
+### 2022-06-18 05:40:50.323210
+################################################################################
+################################################################################
+########## Jun_18_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+  Projects_Fuze_project_id  ... Projects_trans_dt
+0                 16906051  ...        2022-06-17
+1                 16729625  ...        2022-06-17
+2                  2566906  ...        2022-06-17
+3                 16386823  ...        2022-06-17
+4                 15757359  ...        2022-06-17
+
+[5 rows x 29 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dash_view 
+
+                    
+  Dashboar_Fuze_project_id  ... Dashboar_C_Band_bucket
+0                 16621170  ...                   None
+1                 16830031  ...                   None
+2                  2192081  ...                   None
+3                 15903365  ...                   None
+4                  2204963  ...                   None
+
+[5 rows x 11 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dates_view
+
+                    
+  Date_Fuze_project_id  ... Date_inservice_forecast_date
+0              2067487  ...                   2017-10-20
+1             16907504  ...                   2022-09-14
+2             15373965  ...                   2021-03-31
+3             16181639  ...                         None
+4              2006019  ...                   2016-12-14
+
+[5 rows x 8 columns]
+########## Jun_18_2022 : Generating Geo location for QGIS from Fuze information
+Processing MySQL Query...  
+                    SELECT 
+                        * 
+                    FROM public.vzw_fuze_proj
+                    WHERE 
+                        (
+                            "Projects_atoll_site_latitude" is NOT Null
+                            OR
+                            "Projects_sarf_latitude" is NOT Null
+                        )
+                        AND
+                        (
+                            "Projects_atoll_site_longitude" is NOT Null
+                            OR
+                            "Projects_sarf_longitude" is NOT Null
+                        )
+                        
+                    
+Creating geo locations... 
+Processing MySQL Query Creating Table...  
+    
+                            BEGIN;
+                            DROP TABLE IF EXISTS public.vzw_fuze_qgis;
+
+                            CREATE TABLE public.vzw_fuze_qgis as
+                            SELECT 
+                                FLOC."Projects_Fuze_project_id",
+                                FLOC."Projects_parent_solution_id",
+                                FLOC."Projects_site_info_id",
+                                FLOC."lat",
+                                FLOC."lon",
+                                FLOC."geometry",
+
+                                FPRO."Projects_local_market",
+                                FPRO."Projects_name",
+                                FPRO."Projects_Site_name",
+                                FPRO."Projects_Status",
+                                FPRO."Projects_project_scope",
+                                FPRO."Projects_trans_contr_bandwidth",
+                                FPRO."Projects_plan_year",
+                                FPRO."Projects_por",
+                                FPRO."Projects_pl_initiative",
+                                FPRO."Projects_pl_rationale",
+                                FPRO."Projects_proj_category",
+                                FPRO."Projects_pslc",
+                                FPRO."Projects_Subtype",
+                                FPRO."Projects_rf_rank",
+                                FPRO."Projects_modification_type",
+                                FPRO."Projects_type",
+                                FPRO."Projects_site_type",
+                                FPRO."Projects_activation_forecast_date",
+                                EXTRACT (MONTH FROM to_date (FPRO."Projects_activation_forecast_date", 'mm/dd/yyyy')) as "Projects_Activation_Month",
+
+
+
+                                FDSH."Dashboar_Status",
+                                FDSH."Dashboar_RF_Rank",
+                                FDSH."Dashboar_Flagged_Project",
+                                FDSH."Dashboar_Project_subtype",
+                                FDSH."Dashboar_Ready_to_Construct_F",
+                                FDSH."Dashboar_Ready_to_Construct_A",
+                                FDSH."Dashboar_PM_Project_Manager_Group",
+                                FDSH."Dashboar_C_Band_bucket"
+
+                            FROM public.vzw_fuze_loc FLOC
+                            LEFT JOIN public.vzw_fuze_proj FPRO ON FLOC."Projects_Fuze_project_id" = FPRO."Projects_Fuze_project_id"
+                            LEFT JOIN public.vzw_fuze_dash FDSH ON FLOC."Projects_Fuze_project_id" = FDSH."Dashboar_Fuze_project_id"
+                            WHERE "Projects_local_market" IN ('Salt Lake City','Helena','Boise')
+                            ;
+                            COMMIT;
+                    
+################################################################################
+################################################################################
+### 2022-06-19 04:30:03.186599
+### 1) Extracting data from 5G xLPT ....
+##### Jun_19_2022 : Importing xLPT 5G Report
+          DAY  ... 5GNR_InterSgnb_pScell_ResAlloc_Failure_%
+0  06/18/2022  ...                                      0.0
+1  06/18/2022  ...                                      0.0
+2  06/18/2022  ...                                      0.0
+3  06/18/2022  ...                                      0.0
+4  06/18/2022  ...                                      0.0
+
+[5 rows x 73 columns]
+##### 2022-06-19 04:33:16.724123 : Completed import 5Gx LPT
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-19 04:33:16.891276
+### Inserting values in PostgreSQL table: 
+### 2022-06-19 04:33:47.664749
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-19 05:00:01.476840
+### 1) Extracting data from xLPT ....
+### Jun_19_2022 : Importing xLPT Report
+          DAY HR  ... RRC_Reest_Succ_%_QCI_5 RRC_Reest_Succ_%_QCI_1
+0  06/18/2022  0  ...                  92.31                    0.0
+1  06/18/2022  0  ...                  83.33                    0.0
+2  06/18/2022  0  ...                 100.00                    0.0
+3  06/18/2022  0  ...                 100.00                    0.0
+4  06/18/2022  0  ...                   0.00                    0.0
+
+[5 rows x 190 columns]
+### 2022-06-19 05:30:32.672926
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-19 05:30:32.894846
+### Inserting values in PostgreSQL table: 
+### 2022-06-19 05:37:07.593019
+################################################################################
+################################################################################
+########## Jun_19_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+  Projects_Fuze_project_id  ... Projects_trans_dt
+0                 16729625  ...        2022-06-18
+1                  2566906  ...        2022-06-18
+2                 16386823  ...        2022-06-18
+3                 16906051  ...        2022-06-18
+4                 15757359  ...        2022-06-18
+
+[5 rows x 29 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dash_view 
+
+                    
+  Dashboar_Fuze_project_id  ... Dashboar_C_Band_bucket
+0                  2214163  ...                   None
+1                  2196240  ...                   None
+2                  2195339  ...                   None
+3                 15389755  ...                   None
+4                 15033133  ...                   None
+
+[5 rows x 11 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dates_view
+
+                    
+  Date_Fuze_project_id  ... Date_inservice_forecast_date
+0             16183270  ...                   2020-08-15
+1             15744189  ...                   2018-05-02
+2             16596664  ...                   2022-10-04
+3             15126329  ...                         None
+4             15316077  ...                   2034-10-14
+
+[5 rows x 8 columns]
+########## Jun_19_2022 : Generating Geo location for QGIS from Fuze information
+Processing MySQL Query...  
+                    SELECT 
+                        * 
+                    FROM public.vzw_fuze_proj
+                    WHERE 
+                        (
+                            "Projects_atoll_site_latitude" is NOT Null
+                            OR
+                            "Projects_sarf_latitude" is NOT Null
+                        )
+                        AND
+                        (
+                            "Projects_atoll_site_longitude" is NOT Null
+                            OR
+                            "Projects_sarf_longitude" is NOT Null
+                        )
+                        
+                    
+Creating geo locations... 
+Processing MySQL Query Creating Table...  
+    
+                            BEGIN;
+                            DROP TABLE IF EXISTS public.vzw_fuze_qgis;
+
+                            CREATE TABLE public.vzw_fuze_qgis as
+                            SELECT 
+                                FLOC."Projects_Fuze_project_id",
+                                FLOC."Projects_parent_solution_id",
+                                FLOC."Projects_site_info_id",
+                                FLOC."lat",
+                                FLOC."lon",
+                                FLOC."geometry",
+
+                                FPRO."Projects_local_market",
+                                FPRO."Projects_name",
+                                FPRO."Projects_Site_name",
+                                FPRO."Projects_Status",
+                                FPRO."Projects_project_scope",
+                                FPRO."Projects_trans_contr_bandwidth",
+                                FPRO."Projects_plan_year",
+                                FPRO."Projects_por",
+                                FPRO."Projects_pl_initiative",
+                                FPRO."Projects_pl_rationale",
+                                FPRO."Projects_proj_category",
+                                FPRO."Projects_pslc",
+                                FPRO."Projects_Subtype",
+                                FPRO."Projects_rf_rank",
+                                FPRO."Projects_modification_type",
+                                FPRO."Projects_type",
+                                FPRO."Projects_site_type",
+                                FPRO."Projects_activation_forecast_date",
+                                EXTRACT (MONTH FROM to_date (FPRO."Projects_activation_forecast_date", 'mm/dd/yyyy')) as "Projects_Activation_Month",
+
+
+
+                                FDSH."Dashboar_Status",
+                                FDSH."Dashboar_RF_Rank",
+                                FDSH."Dashboar_Flagged_Project",
+                                FDSH."Dashboar_Project_subtype",
+                                FDSH."Dashboar_Ready_to_Construct_F",
+                                FDSH."Dashboar_Ready_to_Construct_A",
+                                FDSH."Dashboar_PM_Project_Manager_Group",
+                                FDSH."Dashboar_C_Band_bucket"
+
+                            FROM public.vzw_fuze_loc FLOC
+                            LEFT JOIN public.vzw_fuze_proj FPRO ON FLOC."Projects_Fuze_project_id" = FPRO."Projects_Fuze_project_id"
+                            LEFT JOIN public.vzw_fuze_dash FDSH ON FLOC."Projects_Fuze_project_id" = FDSH."Dashboar_Fuze_project_id"
+                            WHERE "Projects_local_market" IN ('Salt Lake City','Helena','Boise')
+                            ;
+                            COMMIT;
+                    
+################################################################################
+################################################################################
+### 2022-06-20 04:30:03.388944
+### 1) Extracting data from 5G xLPT ....
+################################################################################
+################################################################################
+### 2022-06-20 05:00:03.502904
+### 1) Extracting data from xLPT ....
+### Jun_20_2022 : Importing xLPT Report
+          DAY HR  ... RRC_Reest_Succ_%_QCI_5 RRC_Reest_Succ_%_QCI_1
+0  06/19/2022  0  ...                  100.0                    0.0
+1  06/19/2022  0  ...                    0.0                    0.0
+2  06/19/2022  0  ...                  100.0                    0.0
+3  06/19/2022  0  ...                  100.0                    0.0
+4  06/19/2022  0  ...                  100.0                    0.0
+
+[5 rows x 190 columns]
+### 2022-06-20 05:30:49.488320
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-20 05:30:49.738158
+### Inserting values in PostgreSQL table: 
+### 2022-06-20 05:37:49.530017
+################################################################################
+################################################################################
+########## Jun_20_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+  Projects_Fuze_project_id  ... Projects_trans_dt
+0                  2566906  ...        2022-06-19
+1                 16386823  ...        2022-06-19
+2                 16906051  ...        2022-06-19
+3                 16729625  ...        2022-06-19
+4                 15757359  ...        2022-06-19
+
+[5 rows x 29 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dash_view 
+
+                    
+  Dashboar_Fuze_project_id  ... Dashboar_C_Band_bucket
+0                 12209124  ...                   None
+1                 15830037  ...                   None
+2                  2484859  ...                   None
+3                 12388203  ...                   None
+4                  2206655  ...                   None
+
+[5 rows x 11 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dates_view
+
+                    
+  Date_Fuze_project_id  ... Date_inservice_forecast_date
+0             15234271  ...                   2019-01-06
+1             12388171  ...                         None
+2             16188742  ...                   2020-07-30
+3             12388243  ...                   2020-07-04
+4             12388247  ...                         None
+
+[5 rows x 8 columns]
+########## Jun_20_2022 : Generating Geo location for QGIS from Fuze information
+Processing MySQL Query...  
+                    SELECT 
+                        * 
+                    FROM public.vzw_fuze_proj
+                    WHERE 
+                        (
+                            "Projects_atoll_site_latitude" is NOT Null
+                            OR
+                            "Projects_sarf_latitude" is NOT Null
+                        )
+                        AND
+                        (
+                            "Projects_atoll_site_longitude" is NOT Null
+                            OR
+                            "Projects_sarf_longitude" is NOT Null
+                        )
+                        
+                    
+Creating geo locations... 
+Processing MySQL Query Creating Table...  
+    
+                            BEGIN;
+                            DROP TABLE IF EXISTS public.vzw_fuze_qgis;
+
+                            CREATE TABLE public.vzw_fuze_qgis as
+                            SELECT 
+                                FLOC."Projects_Fuze_project_id",
+                                FLOC."Projects_parent_solution_id",
+                                FLOC."Projects_site_info_id",
+                                FLOC."lat",
+                                FLOC."lon",
+                                FLOC."geometry",
+
+                                FPRO."Projects_local_market",
+                                FPRO."Projects_name",
+                                FPRO."Projects_Site_name",
+                                FPRO."Projects_Status",
+                                FPRO."Projects_project_scope",
+                                FPRO."Projects_trans_contr_bandwidth",
+                                FPRO."Projects_plan_year",
+                                FPRO."Projects_por",
+                                FPRO."Projects_pl_initiative",
+                                FPRO."Projects_pl_rationale",
+                                FPRO."Projects_proj_category",
+                                FPRO."Projects_pslc",
+                                FPRO."Projects_Subtype",
+                                FPRO."Projects_rf_rank",
+                                FPRO."Projects_modification_type",
+                                FPRO."Projects_type",
+                                FPRO."Projects_site_type",
+                                FPRO."Projects_activation_forecast_date",
+                                EXTRACT (MONTH FROM to_date (FPRO."Projects_activation_forecast_date", 'mm/dd/yyyy')) as "Projects_Activation_Month",
+
+
+
+                                FDSH."Dashboar_Status",
+                                FDSH."Dashboar_RF_Rank",
+                                FDSH."Dashboar_Flagged_Project",
+                                FDSH."Dashboar_Project_subtype",
+                                FDSH."Dashboar_Ready_to_Construct_F",
+                                FDSH."Dashboar_Ready_to_Construct_A",
+                                FDSH."Dashboar_PM_Project_Manager_Group",
+                                FDSH."Dashboar_C_Band_bucket"
+
+                            FROM public.vzw_fuze_loc FLOC
+                            LEFT JOIN public.vzw_fuze_proj FPRO ON FLOC."Projects_Fuze_project_id" = FPRO."Projects_Fuze_project_id"
+                            LEFT JOIN public.vzw_fuze_dash FDSH ON FLOC."Projects_Fuze_project_id" = FDSH."Dashboar_Fuze_project_id"
+                            WHERE "Projects_local_market" IN ('Salt Lake City','Helena','Boise')
+                            ;
+                            COMMIT;
+                    
+################################################################################
+################################################################################
+### 2022-06-21 04:30:03.482692
+### 1) Extracting data from 5G xLPT ....
+################################################################################
+################################################################################
+### 2022-06-21 05:00:03.839367
+### 1) Extracting data from xLPT ....
+### Jun_21_2022 : Importing xLPT Report
+          DAY HR  ... RRC_Reest_Succ_%_QCI_5 RRC_Reest_Succ_%_QCI_1
+0  06/20/2022  0  ...                    0.0                    0.0
+1  06/20/2022  0  ...                  100.0                  100.0
+2  06/20/2022  0  ...                  100.0                    0.0
+3  06/20/2022  0  ...                  100.0                    0.0
+4  06/20/2022  0  ...                  100.0                    0.0
+
+[5 rows x 190 columns]
+### 2022-06-21 05:31:26.911266
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-21 05:31:27.149670
+### Inserting values in PostgreSQL table: 
+### 2022-06-21 05:38:27.004295
+################################################################################
+################################################################################
+########## Jun_21_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+  Projects_Fuze_project_id  ... Projects_trans_dt
+0                 16729625  ...        2022-06-20
+1                 16386823  ...        2022-06-20
+2                 16906051  ...        2022-06-20
+3                  2566906  ...        2022-06-20
+4                 15757359  ...        2022-06-20
+
+[5 rows x 29 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dash_view 
+
+                    
+  Dashboar_Fuze_project_id  ... Dashboar_C_Band_bucket
+0                  2225288  ...                   None
+1                 15193379  ...                   None
+2                 16230552  ...                   None
+3                  2134837  ...                   None
+4                 16261837  ...                   None
+
+[5 rows x 11 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dates_view
+
+                    
+  Date_Fuze_project_id  ... Date_inservice_forecast_date
+0             15019593  ...                   2020-03-12
+1             15302179  ...                   2020-11-25
+2             16688617  ...                   2023-12-28
+3             16699841  ...                   2022-12-31
+4             16742637  ...                   2022-02-04
+
+[5 rows x 8 columns]
+########## Jun_21_2022 : Generating Geo location for QGIS from Fuze information
+Processing MySQL Query...  
+                    SELECT 
+                        * 
+                    FROM public.vzw_fuze_proj
+                    WHERE 
+                        (
+                            "Projects_atoll_site_latitude" is NOT Null
+                            OR
+                            "Projects_sarf_latitude" is NOT Null
+                        )
+                        AND
+                        (
+                            "Projects_atoll_site_longitude" is NOT Null
+                            OR
+                            "Projects_sarf_longitude" is NOT Null
+                        )
+                        
+                    
+Creating geo locations... 
+Processing MySQL Query Creating Table...  
+    
+                            BEGIN;
+                            DROP TABLE IF EXISTS public.vzw_fuze_qgis;
+
+                            CREATE TABLE public.vzw_fuze_qgis as
+                            SELECT 
+                                FLOC."Projects_Fuze_project_id",
+                                FLOC."Projects_parent_solution_id",
+                                FLOC."Projects_site_info_id",
+                                FLOC."lat",
+                                FLOC."lon",
+                                FLOC."geometry",
+
+                                FPRO."Projects_local_market",
+                                FPRO."Projects_name",
+                                FPRO."Projects_Site_name",
+                                FPRO."Projects_Status",
+                                FPRO."Projects_project_scope",
+                                FPRO."Projects_trans_contr_bandwidth",
+                                FPRO."Projects_plan_year",
+                                FPRO."Projects_por",
+                                FPRO."Projects_pl_initiative",
+                                FPRO."Projects_pl_rationale",
+                                FPRO."Projects_proj_category",
+                                FPRO."Projects_pslc",
+                                FPRO."Projects_Subtype",
+                                FPRO."Projects_rf_rank",
+                                FPRO."Projects_modification_type",
+                                FPRO."Projects_type",
+                                FPRO."Projects_site_type",
+                                FPRO."Projects_activation_forecast_date",
+                                EXTRACT (MONTH FROM to_date (FPRO."Projects_activation_forecast_date", 'mm/dd/yyyy')) as "Projects_Activation_Month",
+
+
+
+                                FDSH."Dashboar_Status",
+                                FDSH."Dashboar_RF_Rank",
+                                FDSH."Dashboar_Flagged_Project",
+                                FDSH."Dashboar_Project_subtype",
+                                FDSH."Dashboar_Ready_to_Construct_F",
+                                FDSH."Dashboar_Ready_to_Construct_A",
+                                FDSH."Dashboar_PM_Project_Manager_Group",
+                                FDSH."Dashboar_C_Band_bucket"
+
+                            FROM public.vzw_fuze_loc FLOC
+                            LEFT JOIN public.vzw_fuze_proj FPRO ON FLOC."Projects_Fuze_project_id" = FPRO."Projects_Fuze_project_id"
+                            LEFT JOIN public.vzw_fuze_dash FDSH ON FLOC."Projects_Fuze_project_id" = FDSH."Dashboar_Fuze_project_id"
+                            WHERE "Projects_local_market" IN ('Salt Lake City','Helena','Boise')
+                            ;
+                            COMMIT;
+                    
+################################################################################
+################################################################################
+### 2022-06-23 04:30:07.972012
+### 1) Extracting data from 5G xLPT ....
+##### Jun_23_2022 : Importing xLPT 5G Report
+          DAY  ...  5GNR_InterSgnb_pScell_ResAlloc_Failure_%
+0  06/22/2022  ...                                       0.0
+1  06/22/2022  ...                                       0.0
+2  06/22/2022  ...                                       0.0
+3  06/22/2022  ...                                       0.0
+4  06/22/2022  ...                                       0.0
+
+[5 rows x 73 columns]
+##### 2022-06-23 04:31:01.253840 : Completed import 5Gx LPT
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-23 04:31:01.501641
+### Inserting values in PostgreSQL table: 
+### 2022-06-23 04:31:31.211114
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-23 05:00:03.336071
+### 1) Extracting data from xLPT ....
+### Jun_23_2022 : Importing xLPT Report
+          DAY HR  ... RRC_Reest_Succ_%_QCI_5 RRC_Reest_Succ_%_QCI_1
+0  06/22/2022  0  ...                 100.00                    0.0
+1  06/22/2022  0  ...                   0.00                    0.0
+2  06/22/2022  0  ...                 100.00                    0.0
+3  06/22/2022  0  ...                  98.81                  100.0
+4  06/22/2022  0  ...                  97.47                  100.0
+
+[5 rows x 190 columns]
+### 2022-06-23 05:39:22.388695
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-23 05:39:22.569151
+### Inserting values in PostgreSQL table: 
+### 2022-06-23 05:45:49.650117
+################################################################################
+################################################################################
+########## Jun_23_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+  Projects_Fuze_project_id  ... Projects_trans_dt
+0                 16729625  ...        2022-06-22
+1                 16906051  ...        2022-06-22
+2                  2566906  ...        2022-06-22
+3                 16386823  ...        2022-06-22
+4                 15757359  ...        2022-06-22
+
+[5 rows x 29 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dash_view 
+
+                    
+  Dashboar_Fuze_project_id  ... Dashboar_C_Band_bucket
+0                  2589234  ...                   None
+1                 15841591  ...                   None
+2                 12343191  ...                   None
+3                  2246218  ...                   None
+4                 16188779  ...                   None
+
+[5 rows x 11 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dates_view
+
+                    
+  Date_Fuze_project_id  ... Date_inservice_forecast_date
+0             16053273  ...                   2022-08-12
+1             16829115  ...                   2023-01-22
+2             15232461  ...                   2019-10-30
+3             16248359  ...                   2021-12-27
+4             16375503  ...                   2023-01-03
+
+[5 rows x 8 columns]
+########## Jun_23_2022 : Generating Geo location for QGIS from Fuze information
+Processing MySQL Query...  
+                    SELECT 
+                        * 
+                    FROM public.vzw_fuze_proj
+                    WHERE 
+                        (
+                            "Projects_atoll_site_latitude" is NOT Null
+                            OR
+                            "Projects_sarf_latitude" is NOT Null
+                        )
+                        AND
+                        (
+                            "Projects_atoll_site_longitude" is NOT Null
+                            OR
+                            "Projects_sarf_longitude" is NOT Null
+                        )
+                        
+                    
+Creating geo locations... 
+Processing MySQL Query Creating Table...  
+    
+                            BEGIN;
+                            DROP TABLE IF EXISTS public.vzw_fuze_qgis;
+
+                            CREATE TABLE public.vzw_fuze_qgis as
+                            SELECT 
+                                FLOC."Projects_Fuze_project_id",
+                                FLOC."Projects_parent_solution_id",
+                                FLOC."Projects_site_info_id",
+                                FLOC."lat",
+                                FLOC."lon",
+                                FLOC."geometry",
+
+                                FPRO."Projects_local_market",
+                                FPRO."Projects_name",
+                                FPRO."Projects_Site_name",
+                                FPRO."Projects_Status",
+                                FPRO."Projects_project_scope",
+                                FPRO."Projects_trans_contr_bandwidth",
+                                FPRO."Projects_plan_year",
+                                FPRO."Projects_por",
+                                FPRO."Projects_pl_initiative",
+                                FPRO."Projects_pl_rationale",
+                                FPRO."Projects_proj_category",
+                                FPRO."Projects_pslc",
+                                FPRO."Projects_Subtype",
+                                FPRO."Projects_rf_rank",
+                                FPRO."Projects_modification_type",
+                                FPRO."Projects_type",
+                                FPRO."Projects_site_type",
+                                FPRO."Projects_activation_forecast_date",
+                                EXTRACT (MONTH FROM to_date (FPRO."Projects_activation_forecast_date", 'mm/dd/yyyy')) as "Projects_Activation_Month",
+
+
+
+                                FDSH."Dashboar_Status",
+                                FDSH."Dashboar_RF_Rank",
+                                FDSH."Dashboar_Flagged_Project",
+                                FDSH."Dashboar_Project_subtype",
+                                FDSH."Dashboar_Ready_to_Construct_F",
+                                FDSH."Dashboar_Ready_to_Construct_A",
+                                FDSH."Dashboar_PM_Project_Manager_Group",
+                                FDSH."Dashboar_C_Band_bucket"
+
+                            FROM public.vzw_fuze_loc FLOC
+                            LEFT JOIN public.vzw_fuze_proj FPRO ON FLOC."Projects_Fuze_project_id" = FPRO."Projects_Fuze_project_id"
+                            LEFT JOIN public.vzw_fuze_dash FDSH ON FLOC."Projects_Fuze_project_id" = FDSH."Dashboar_Fuze_project_id"
+                            WHERE "Projects_local_market" IN ('Salt Lake City','Helena','Boise')
+                            ;
+                            COMMIT;
+                    
+################################################################################
+################################################################################
+### 2022-06-24 04:30:03.280030
+### 1) Extracting data from 5G xLPT ....
+################################################################################
+################################################################################
+### 2022-06-24 05:00:03.484589
+### 1) Extracting data from xLPT ....
+### Jun_24_2022 : Importing xLPT Report
+          DAY HR  ... RRC_Reest_Succ_%_QCI_5 RRC_Reest_Succ_%_QCI_1
+0  06/23/2022  0  ...                  100.0                    0.0
+1  06/23/2022  0  ...                  100.0                    0.0
+2  06/23/2022  0  ...                    0.0                    0.0
+3  06/23/2022  0  ...                  100.0                  100.0
+4  06/23/2022  0  ...                  100.0                    0.0
+
+[5 rows x 190 columns]
+### 2022-06-24 05:30:47.981488
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-24 05:30:48.242911
+### Inserting values in PostgreSQL table: 
+### 2022-06-24 05:37:25.890142
+################################################################################
+################################################################################
+########## Jun_24_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+  Projects_Fuze_project_id  ... Projects_trans_dt
+0                 16729625  ...        2022-06-23
+1                 16906051  ...        2022-06-23
+2                 16386823  ...        2022-06-23
+3                  2566906  ...        2022-06-23
+4                 15757359  ...        2022-06-23
+
+[5 rows x 29 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dash_view 
+
+                    
+  Dashboar_Fuze_project_id  ... Dashboar_C_Band_bucket
+0                 16495396  ...                   None
+1                 16872982  ...                   None
+2                 15397361  ...                   None
+3                 15823249  ...                   None
+4                 16872544  ...                   None
+
+[5 rows x 11 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dates_view
+
+                    
+  Date_Fuze_project_id  ... Date_inservice_forecast_date
+0              2558525  ...                   2019-01-14
+1             16799997  ...                         None
+2             15292811  ...                   2018-10-31
+3             16911469  ...                         None
+4             15299317  ...                         None
+
+[5 rows x 8 columns]
+########## Jun_24_2022 : Generating Geo location for QGIS from Fuze information
+Processing MySQL Query...  
+                    SELECT 
+                        * 
+                    FROM public.vzw_fuze_proj
+                    WHERE 
+                        (
+                            "Projects_atoll_site_latitude" is NOT Null
+                            OR
+                            "Projects_sarf_latitude" is NOT Null
+                        )
+                        AND
+                        (
+                            "Projects_atoll_site_longitude" is NOT Null
+                            OR
+                            "Projects_sarf_longitude" is NOT Null
+                        )
+                        
+                    
+Creating geo locations... 
+Processing MySQL Query Creating Table...  
+    
+                            BEGIN;
+                            DROP TABLE IF EXISTS public.vzw_fuze_qgis;
+
+                            CREATE TABLE public.vzw_fuze_qgis as
+                            SELECT 
+                                FLOC."Projects_Fuze_project_id",
+                                FLOC."Projects_parent_solution_id",
+                                FLOC."Projects_site_info_id",
+                                FLOC."lat",
+                                FLOC."lon",
+                                FLOC."geometry",
+
+                                FPRO."Projects_local_market",
+                                FPRO."Projects_name",
+                                FPRO."Projects_Site_name",
+                                FPRO."Projects_Status",
+                                FPRO."Projects_project_scope",
+                                FPRO."Projects_trans_contr_bandwidth",
+                                FPRO."Projects_plan_year",
+                                FPRO."Projects_por",
+                                FPRO."Projects_pl_initiative",
+                                FPRO."Projects_pl_rationale",
+                                FPRO."Projects_proj_category",
+                                FPRO."Projects_pslc",
+                                FPRO."Projects_Subtype",
+                                FPRO."Projects_rf_rank",
+                                FPRO."Projects_modification_type",
+                                FPRO."Projects_type",
+                                FPRO."Projects_site_type",
+                                FPRO."Projects_activation_forecast_date",
+                                EXTRACT (MONTH FROM to_date (FPRO."Projects_activation_forecast_date", 'mm/dd/yyyy')) as "Projects_Activation_Month",
+
+
+
+                                FDSH."Dashboar_Status",
+                                FDSH."Dashboar_RF_Rank",
+                                FDSH."Dashboar_Flagged_Project",
+                                FDSH."Dashboar_Project_subtype",
+                                FDSH."Dashboar_Ready_to_Construct_F",
+                                FDSH."Dashboar_Ready_to_Construct_A",
+                                FDSH."Dashboar_PM_Project_Manager_Group",
+                                FDSH."Dashboar_C_Band_bucket"
+
+                            FROM public.vzw_fuze_loc FLOC
+                            LEFT JOIN public.vzw_fuze_proj FPRO ON FLOC."Projects_Fuze_project_id" = FPRO."Projects_Fuze_project_id"
+                            LEFT JOIN public.vzw_fuze_dash FDSH ON FLOC."Projects_Fuze_project_id" = FDSH."Dashboar_Fuze_project_id"
+                            WHERE "Projects_local_market" IN ('Salt Lake City','Helena','Boise')
+                            ;
+                            COMMIT;
+                    
+################################################################################
+################################################################################
+### 2022-06-25 04:30:03.720816
+### 1) Extracting data from 5G xLPT ....
+##### Jun_25_2022 : Importing xLPT 5G Report
+          DAY  ...  5GNR_InterSgnb_pScell_ResAlloc_Failure_%
+0  06/24/2022  ...                                       0.0
+1  06/24/2022  ...                                       0.0
+2  06/24/2022  ...                                       0.0
+3  06/24/2022  ...                                       0.0
+4  06/24/2022  ...                                       0.0
+
+[5 rows x 73 columns]
+##### 2022-06-25 04:31:11.064190 : Completed import 5Gx LPT
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-25 04:31:11.358974
+### Inserting values in PostgreSQL table: 
+### 2022-06-25 04:31:46.581472
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-25 05:00:02.726030
+### 1) Extracting data from xLPT ....
+### Jun_25_2022 : Importing xLPT Report
+          DAY HR  ... RRC_Reest_Succ_%_QCI_5 RRC_Reest_Succ_%_QCI_1
+0  06/24/2022  0  ...                 100.00                    0.0
+1  06/24/2022  0  ...                 100.00                    0.0
+2  06/24/2022  0  ...                  93.37                  100.0
+3  06/24/2022  0  ...                 100.00                    0.0
+4  06/24/2022  0  ...                  95.80                    0.0
+
+[5 rows x 190 columns]
+### 2022-06-25 05:44:45.012568
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-25 05:44:45.234978
+### Inserting values in PostgreSQL table: 
+### 2022-06-25 05:54:01.568036
+################################################################################
+################################################################################
+########## Jun_25_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+  Projects_Fuze_project_id  ... Projects_trans_dt
+0                 16729625  ...        2022-06-24
+1                 16952373  ...        2022-06-24
+2                  2566906  ...        2022-06-24
+3                 16386823  ...        2022-06-24
+4                 16906051  ...        2022-06-24
+
+[5 rows x 29 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dash_view 
+
+                    
+  Dashboar_Fuze_project_id  ... Dashboar_C_Band_bucket
+0                 16907820  ...                   None
+1                 15027215  ...                   None
+2                 12387983  ...                   None
+3                 15525999  ...                   None
+4                 15191775  ...                   None
+
+[5 rows x 11 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dates_view
+
+                    
+  Date_Fuze_project_id  ... Date_inservice_forecast_date
+0             15160063  ...                   2023-05-07
+1              2470218  ...                         None
+2              2579539  ...                   2020-11-11
+3             15739777  ...                         None
+4             16211124  ...                   2020-08-17
+
+[5 rows x 8 columns]
+########## Jun_25_2022 : Generating Geo location for QGIS from Fuze information
+Processing MySQL Query...  
+                    SELECT 
+                        * 
+                    FROM public.vzw_fuze_proj
+                    WHERE 
+                        (
+                            "Projects_atoll_site_latitude" is NOT Null
+                            OR
+                            "Projects_sarf_latitude" is NOT Null
+                        )
+                        AND
+                        (
+                            "Projects_atoll_site_longitude" is NOT Null
+                            OR
+                            "Projects_sarf_longitude" is NOT Null
+                        )
+                        
+                    
+Creating geo locations... 
+Processing MySQL Query Creating Table...  
+    
+                            BEGIN;
+                            DROP TABLE IF EXISTS public.vzw_fuze_qgis;
+
+                            CREATE TABLE public.vzw_fuze_qgis as
+                            SELECT 
+                                FLOC."Projects_Fuze_project_id",
+                                FLOC."Projects_parent_solution_id",
+                                FLOC."Projects_site_info_id",
+                                FLOC."lat",
+                                FLOC."lon",
+                                FLOC."geometry",
+
+                                FPRO."Projects_local_market",
+                                FPRO."Projects_name",
+                                FPRO."Projects_Site_name",
+                                FPRO."Projects_Status",
+                                FPRO."Projects_project_scope",
+                                FPRO."Projects_trans_contr_bandwidth",
+                                FPRO."Projects_plan_year",
+                                FPRO."Projects_por",
+                                FPRO."Projects_pl_initiative",
+                                FPRO."Projects_pl_rationale",
+                                FPRO."Projects_proj_category",
+                                FPRO."Projects_pslc",
+                                FPRO."Projects_Subtype",
+                                FPRO."Projects_rf_rank",
+                                FPRO."Projects_modification_type",
+                                FPRO."Projects_type",
+                                FPRO."Projects_site_type",
+                                FPRO."Projects_activation_forecast_date",
+                                EXTRACT (MONTH FROM to_date (FPRO."Projects_activation_forecast_date", 'mm/dd/yyyy')) as "Projects_Activation_Month",
+
+
+
+                                FDSH."Dashboar_Status",
+                                FDSH."Dashboar_RF_Rank",
+                                FDSH."Dashboar_Flagged_Project",
+                                FDSH."Dashboar_Project_subtype",
+                                FDSH."Dashboar_Ready_to_Construct_F",
+                                FDSH."Dashboar_Ready_to_Construct_A",
+                                FDSH."Dashboar_PM_Project_Manager_Group",
+                                FDSH."Dashboar_C_Band_bucket"
+
+                            FROM public.vzw_fuze_loc FLOC
+                            LEFT JOIN public.vzw_fuze_proj FPRO ON FLOC."Projects_Fuze_project_id" = FPRO."Projects_Fuze_project_id"
+                            LEFT JOIN public.vzw_fuze_dash FDSH ON FLOC."Projects_Fuze_project_id" = FDSH."Dashboar_Fuze_project_id"
+                            WHERE "Projects_local_market" IN ('Salt Lake City','Helena','Boise')
+                            ;
+                            COMMIT;
+                    
+################################################################################
+################################################################################
+### 2022-06-26 04:30:03.383885
+### 1) Extracting data from 5G xLPT ....
+################################################################################
+################################################################################
+### 2022-06-26 05:00:03.040919
+### 1) Extracting data from xLPT ....
+### Jun_26_2022 : Importing xLPT Report
+          DAY HR  ... RRC_Reest_Succ_%_QCI_5 RRC_Reest_Succ_%_QCI_1
+0  06/25/2022  0  ...                  100.0                    0.0
+1  06/25/2022  0  ...                  100.0                    0.0
+2  06/25/2022  0  ...                  100.0                    0.0
+3  06/25/2022  0  ...                  100.0                    0.0
+4  06/25/2022  0  ...                  100.0                    0.0
+
+[5 rows x 190 columns]
+### 2022-06-26 05:36:12.896232
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-26 05:36:13.164982
+### Inserting values in PostgreSQL table: 
+### 2022-06-26 05:44:58.487019
+################################################################################
+################################################################################
+########## Jun_26_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+  Projects_Fuze_project_id  ... Projects_trans_dt
+0                 16952373  ...        2022-06-25
+1                 16906051  ...        2022-06-25
+2                 16386823  ...        2022-06-25
+3                  2566906  ...        2022-06-25
+4                 16729625  ...        2022-06-25
+
+[5 rows x 29 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dash_view 
+
+                    
+  Dashboar_Fuze_project_id  ... Dashboar_C_Band_bucket
+0                 15465397  ...                   None
+1                  2237759  ...                   None
+2                  2237325  ...                   None
+3                 15210011  ...                   None
+4                 16261690  ...                   None
+
+[5 rows x 11 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dates_view
+
+                    
+  Date_Fuze_project_id  ... Date_inservice_forecast_date
+0             16649303  ...                   2022-11-30
+1             15743785  ...                   2015-11-01
+2             16054279  ...                   2021-08-09
+3             16089123  ...                   2030-12-31
+4              2144747  ...                   2014-12-31
+
+[5 rows x 8 columns]
+########## Jun_26_2022 : Generating Geo location for QGIS from Fuze information
+Processing MySQL Query...  
+                    SELECT 
+                        * 
+                    FROM public.vzw_fuze_proj
+                    WHERE 
+                        (
+                            "Projects_atoll_site_latitude" is NOT Null
+                            OR
+                            "Projects_sarf_latitude" is NOT Null
+                        )
+                        AND
+                        (
+                            "Projects_atoll_site_longitude" is NOT Null
+                            OR
+                            "Projects_sarf_longitude" is NOT Null
+                        )
+                        
+                    
+Creating geo locations... 
+Processing MySQL Query Creating Table...  
+    
+                            BEGIN;
+                            DROP TABLE IF EXISTS public.vzw_fuze_qgis;
+
+                            CREATE TABLE public.vzw_fuze_qgis as
+                            SELECT 
+                                FLOC."Projects_Fuze_project_id",
+                                FLOC."Projects_parent_solution_id",
+                                FLOC."Projects_site_info_id",
+                                FLOC."lat",
+                                FLOC."lon",
+                                FLOC."geometry",
+
+                                FPRO."Projects_local_market",
+                                FPRO."Projects_name",
+                                FPRO."Projects_Site_name",
+                                FPRO."Projects_Status",
+                                FPRO."Projects_project_scope",
+                                FPRO."Projects_trans_contr_bandwidth",
+                                FPRO."Projects_plan_year",
+                                FPRO."Projects_por",
+                                FPRO."Projects_pl_initiative",
+                                FPRO."Projects_pl_rationale",
+                                FPRO."Projects_proj_category",
+                                FPRO."Projects_pslc",
+                                FPRO."Projects_Subtype",
+                                FPRO."Projects_rf_rank",
+                                FPRO."Projects_modification_type",
+                                FPRO."Projects_type",
+                                FPRO."Projects_site_type",
+                                FPRO."Projects_activation_forecast_date",
+                                EXTRACT (MONTH FROM to_date (FPRO."Projects_activation_forecast_date", 'mm/dd/yyyy')) as "Projects_Activation_Month",
+
+
+
+                                FDSH."Dashboar_Status",
+                                FDSH."Dashboar_RF_Rank",
+                                FDSH."Dashboar_Flagged_Project",
+                                FDSH."Dashboar_Project_subtype",
+                                FDSH."Dashboar_Ready_to_Construct_F",
+                                FDSH."Dashboar_Ready_to_Construct_A",
+                                FDSH."Dashboar_PM_Project_Manager_Group",
+                                FDSH."Dashboar_C_Band_bucket"
+
+                            FROM public.vzw_fuze_loc FLOC
+                            LEFT JOIN public.vzw_fuze_proj FPRO ON FLOC."Projects_Fuze_project_id" = FPRO."Projects_Fuze_project_id"
+                            LEFT JOIN public.vzw_fuze_dash FDSH ON FLOC."Projects_Fuze_project_id" = FDSH."Dashboar_Fuze_project_id"
+                            WHERE "Projects_local_market" IN ('Salt Lake City','Helena','Boise')
+                            ;
+                            COMMIT;
+                    
+################################################################################
+################################################################################
+### 2022-06-27 04:30:03.093515
+### 1) Extracting data from 5G xLPT ....
+##### Jun_27_2022 : Importing xLPT 5G Report
+          DAY  ...  5GNR_InterSgnb_pScell_ResAlloc_Failure_%
+0  06/26/2022  ...                                       0.0
+1  06/26/2022  ...                                       0.0
+2  06/26/2022  ...                                       0.0
+3  06/26/2022  ...                                       0.0
+4  06/26/2022  ...                                       0.0
+
+[5 rows x 73 columns]
+##### 2022-06-27 04:31:02.111792 : Completed import 5Gx LPT
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-27 04:31:02.380852
+### Inserting values in PostgreSQL table: 
+### 2022-06-27 04:31:34.571985
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-27 05:00:03.155483
+### 1) Extracting data from xLPT ....
+### Jun_27_2022 : Importing xLPT Report
+          DAY HR  ... RRC_Reest_Succ_%_QCI_5 RRC_Reest_Succ_%_QCI_1
+0  06/26/2022  0  ...                 100.00                    0.0
+1  06/26/2022  0  ...                 100.00                    0.0
+2  06/26/2022  0  ...                  95.65                    0.0
+3  06/26/2022  0  ...                 100.00                    0.0
+4  06/26/2022  0  ...                 100.00                    0.0
+
+[5 rows x 190 columns]
+### 2022-06-27 05:40:19.555905
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-27 05:40:19.849391
+### Inserting values in PostgreSQL table: 
+### 2022-06-27 05:50:24.981325
+################################################################################
+################################################################################
+########## Jun_27_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+  Projects_Fuze_project_id  ... Projects_trans_dt
+0                 16952373  ...        2022-06-26
+1                 16729625  ...        2022-06-26
+2                 16906051  ...        2022-06-26
+3                 16386823  ...        2022-06-26
+4                  2566906  ...        2022-06-26
+
+[5 rows x 29 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dash_view 
+
+                    
+  Dashboar_Fuze_project_id  ... Dashboar_C_Band_bucket
+0                  2221824  ...                   None
+1                 16230811  ...                   None
+2                  2210083  ...                   None
+3                  2172697  ...                   None
+4                  2177878  ...                   None
+
+[5 rows x 11 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dates_view
+
+                    
+  Date_Fuze_project_id  ... Date_inservice_forecast_date
+0             16638195  ...                   2022-01-19
+1             16638230  ...                   2022-01-19
+2             15281805  ...                   2025-09-04
+3             16598613  ...                         None
+4             15744381  ...                   2018-11-30
+
+[5 rows x 8 columns]
+########## Jun_27_2022 : Generating Geo location for QGIS from Fuze information
+Processing MySQL Query...  
+                    SELECT 
+                        * 
+                    FROM public.vzw_fuze_proj
+                    WHERE 
+                        (
+                            "Projects_atoll_site_latitude" is NOT Null
+                            OR
+                            "Projects_sarf_latitude" is NOT Null
+                        )
+                        AND
+                        (
+                            "Projects_atoll_site_longitude" is NOT Null
+                            OR
+                            "Projects_sarf_longitude" is NOT Null
+                        )
+                        
+                    
+Creating geo locations... 
+Processing MySQL Query Creating Table...  
+    
+                            BEGIN;
+                            DROP TABLE IF EXISTS public.vzw_fuze_qgis;
+
+                            CREATE TABLE public.vzw_fuze_qgis as
+                            SELECT 
+                                FLOC."Projects_Fuze_project_id",
+                                FLOC."Projects_parent_solution_id",
+                                FLOC."Projects_site_info_id",
+                                FLOC."lat",
+                                FLOC."lon",
+                                FLOC."geometry",
+
+                                FPRO."Projects_local_market",
+                                FPRO."Projects_name",
+                                FPRO."Projects_Site_name",
+                                FPRO."Projects_Status",
+                                FPRO."Projects_project_scope",
+                                FPRO."Projects_trans_contr_bandwidth",
+                                FPRO."Projects_plan_year",
+                                FPRO."Projects_por",
+                                FPRO."Projects_pl_initiative",
+                                FPRO."Projects_pl_rationale",
+                                FPRO."Projects_proj_category",
+                                FPRO."Projects_pslc",
+                                FPRO."Projects_Subtype",
+                                FPRO."Projects_rf_rank",
+                                FPRO."Projects_modification_type",
+                                FPRO."Projects_type",
+                                FPRO."Projects_site_type",
+                                FPRO."Projects_activation_forecast_date",
+                                EXTRACT (MONTH FROM to_date (FPRO."Projects_activation_forecast_date", 'mm/dd/yyyy')) as "Projects_Activation_Month",
+
+
+
+                                FDSH."Dashboar_Status",
+                                FDSH."Dashboar_RF_Rank",
+                                FDSH."Dashboar_Flagged_Project",
+                                FDSH."Dashboar_Project_subtype",
+                                FDSH."Dashboar_Ready_to_Construct_F",
+                                FDSH."Dashboar_Ready_to_Construct_A",
+                                FDSH."Dashboar_PM_Project_Manager_Group",
+                                FDSH."Dashboar_C_Band_bucket"
+
+                            FROM public.vzw_fuze_loc FLOC
+                            LEFT JOIN public.vzw_fuze_proj FPRO ON FLOC."Projects_Fuze_project_id" = FPRO."Projects_Fuze_project_id"
+                            LEFT JOIN public.vzw_fuze_dash FDSH ON FLOC."Projects_Fuze_project_id" = FDSH."Dashboar_Fuze_project_id"
+                            WHERE "Projects_local_market" IN ('Salt Lake City','Helena','Boise')
+                            ;
+                            COMMIT;
+                    
+################################################################################
+################################################################################
+### 2022-06-28 04:30:03.409024
+### 1) Extracting data from 5G xLPT ....
+################################################################################
+################################################################################
+### 2022-06-28 05:00:03.689234
+### 1) Extracting data from xLPT ....
+### Jun_28_2022 : Importing xLPT Report
+          DAY HR  ... RRC_Reest_Succ_%_QCI_5 RRC_Reest_Succ_%_QCI_1
+0  06/27/2022  0  ...                  100.0                    0.0
+1  06/27/2022  0  ...                  100.0                    0.0
+2  06/27/2022  0  ...                    0.0                    0.0
+3  06/27/2022  0  ...                  100.0                    0.0
+4  06/27/2022  0  ...                  100.0                    0.0
+
+[5 rows x 190 columns]
+### 2022-06-28 05:39:38.869871
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-06-28 05:39:39.112277
+### Inserting values in PostgreSQL table: 
+### 2022-06-28 05:47:00.332895
+################################################################################
+################################################################################
+########## Jun_28_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+  Projects_Fuze_project_id  ... Projects_trans_dt
+0                  2566906  ...        2022-06-27
+1                 16952373  ...        2022-06-27
+2                 16386823  ...        2022-06-27
+3                 16906051  ...        2022-06-27
+4                 16729625  ...        2022-06-27
+
+[5 rows x 29 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dash_view 
+
+                    
+  Dashboar_Fuze_project_id  ... Dashboar_C_Band_bucket
+0                 15179747  ...                   None
+1                 16917540  ...                   None
+2                 15720345  ...                   None
+3                  2179574  ...                   None
+4                 16288549  ...                   None
+
+[5 rows x 11 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dates_view
+
+                    
+  Date_Fuze_project_id  ... Date_inservice_forecast_date
+0              2165974  ...                         None
+1             16386780  ...                   2021-04-30
+2             15031707  ...                         None
+3             15199373  ...                   2022-12-31
+4             15330221  ...                         None
+
+[5 rows x 8 columns]
+########## Jun_28_2022 : Generating Geo location for QGIS from Fuze information
+Processing MySQL Query...  
+                    SELECT 
+                        * 
+                    FROM public.vzw_fuze_proj
+                    WHERE 
+                        (
+                            "Projects_atoll_site_latitude" is NOT Null
+                            OR
+                            "Projects_sarf_latitude" is NOT Null
+                        )
+                        AND
+                        (
+                            "Projects_atoll_site_longitude" is NOT Null
+                            OR
+                            "Projects_sarf_longitude" is NOT Null
+                        )
+                        
+                    
+Creating geo locations... 
+Processing MySQL Query Creating Table...  
+    
+                            BEGIN;
+                            DROP TABLE IF EXISTS public.vzw_fuze_qgis;
+
+                            CREATE TABLE public.vzw_fuze_qgis as
+                            SELECT 
+                                FLOC."Projects_Fuze_project_id",
+                                FLOC."Projects_parent_solution_id",
+                                FLOC."Projects_site_info_id",
+                                FLOC."lat",
+                                FLOC."lon",
+                                FLOC."geometry",
+
+                                FPRO."Projects_local_market",
+                                FPRO."Projects_name",
+                                FPRO."Projects_Site_name",
+                                FPRO."Projects_Status",
+                                FPRO."Projects_project_scope",
+                                FPRO."Projects_trans_contr_bandwidth",
+                                FPRO."Projects_plan_year",
+                                FPRO."Projects_por",
+                                FPRO."Projects_pl_initiative",
+                                FPRO."Projects_pl_rationale",
+                                FPRO."Projects_proj_category",
+                                FPRO."Projects_pslc",
+                                FPRO."Projects_Subtype",
+                                FPRO."Projects_rf_rank",
+                                FPRO."Projects_modification_type",
+                                FPRO."Projects_type",
+                                FPRO."Projects_site_type",
+                                FPRO."Projects_activation_forecast_date",
+                                EXTRACT (MONTH FROM to_date (FPRO."Projects_activation_forecast_date", 'mm/dd/yyyy')) as "Projects_Activation_Month",
+
+
+
+                                FDSH."Dashboar_Status",
+                                FDSH."Dashboar_RF_Rank",
+                                FDSH."Dashboar_Flagged_Project",
+                                FDSH."Dashboar_Project_subtype",
+                                FDSH."Dashboar_Ready_to_Construct_F",
+                                FDSH."Dashboar_Ready_to_Construct_A",
+                                FDSH."Dashboar_PM_Project_Manager_Group",
+                                FDSH."Dashboar_C_Band_bucket"
+
+                            FROM public.vzw_fuze_loc FLOC
+                            LEFT JOIN public.vzw_fuze_proj FPRO ON FLOC."Projects_Fuze_project_id" = FPRO."Projects_Fuze_project_id"
+                            LEFT JOIN public.vzw_fuze_dash FDSH ON FLOC."Projects_Fuze_project_id" = FDSH."Dashboar_Fuze_project_id"
+                            WHERE "Projects_local_market" IN ('Salt Lake City','Helena','Boise')
+                            ;
+                            COMMIT;
+                    
+################################################################################
+################################################################################
+### 2022-07-01 04:30:09.442953
+### Inserting values in PostgreSQL table: 
+### 2022-07-01 04:31:06.349719
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-01 05:00:03.190310
+### 1) Extracting data from xLPT ....
+### Jul_01_2022 : Importing xLPT Report
+          DAY HR  ... RRC_Reest_Succ_%_QCI_5 RRC_Reest_Succ_%_QCI_1
+0  06/30/2022  0  ...                    0.0                    0.0
+1  06/30/2022  0  ...                    0.0                    0.0
+2  06/30/2022  0  ...                    0.0                    0.0
+3  06/30/2022  0  ...                  100.0                    0.0
+4  06/30/2022  0  ...                  100.0                    0.0
+
+[5 rows x 190 columns]
+### 2022-07-01 05:39:10.114606
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-01 05:39:10.296352
+### Inserting values in PostgreSQL table: 
+### 2022-07-01 05:45:20.163241
+################################################################################
+################################################################################
+########## Jul_01_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+  Projects_Fuze_project_id  ... Projects_trans_dt
+0                 16952373  ...        2022-06-30
+1                 16906051  ...        2022-06-30
+2                 16386823  ...        2022-06-30
+3                  2566906  ...        2022-06-30
+4                 16729625  ...        2022-06-30
+
+[5 rows x 29 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dash_view 
+
+                    
+  Dashboar_Fuze_project_id  ... Dashboar_C_Band_bucket
+0                  2220399  ...                   None
+1                  2218935  ...                   None
+2                 16244697  ...                   None
+3                 16637778  ...                   None
+4                 16423046  ...                   None
+
+[5 rows x 11 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dates_view
+
+                    
+  Date_Fuze_project_id  ... Date_inservice_forecast_date
+0             16145385  ...                         None
+1             16147938  ...                   2022-12-19
+2             16147939  ...                   2022-08-05
+3             16144204  ...                   2022-02-11
+4             16144695  ...                   2024-08-01
+
+[5 rows x 8 columns]
+########## Jul_01_2022 : Generating Geo location for QGIS from Fuze information
+Processing MySQL Query...  
+                    SELECT 
+                        * 
+                    FROM public.vzw_fuze_proj
+                    WHERE 
+                        (
+                            "Projects_atoll_site_latitude" is NOT Null
+                            OR
+                            "Projects_sarf_latitude" is NOT Null
+                        )
+                        AND
+                        (
+                            "Projects_atoll_site_longitude" is NOT Null
+                            OR
+                            "Projects_sarf_longitude" is NOT Null
+                        )
+                        
+                    
+Creating geo locations... 
+Processing MySQL Query Creating Table...  
+    
+                            BEGIN;
+                            DROP TABLE IF EXISTS public.vzw_fuze_qgis;
+
+                            CREATE TABLE public.vzw_fuze_qgis as
+                            SELECT 
+                                FLOC."Projects_Fuze_project_id",
+                                FLOC."Projects_parent_solution_id",
+                                FLOC."Projects_site_info_id",
+                                FLOC."lat",
+                                FLOC."lon",
+                                FLOC."geometry",
+
+                                FPRO."Projects_local_market",
+                                FPRO."Projects_name",
+                                FPRO."Projects_Site_name",
+                                FPRO."Projects_Status",
+                                FPRO."Projects_project_scope",
+                                FPRO."Projects_trans_contr_bandwidth",
+                                FPRO."Projects_plan_year",
+                                FPRO."Projects_por",
+                                FPRO."Projects_pl_initiative",
+                                FPRO."Projects_pl_rationale",
+                                FPRO."Projects_proj_category",
+                                FPRO."Projects_pslc",
+                                FPRO."Projects_Subtype",
+                                FPRO."Projects_rf_rank",
+                                FPRO."Projects_modification_type",
+                                FPRO."Projects_type",
+                                FPRO."Projects_site_type",
+                                FPRO."Projects_activation_forecast_date",
+                                EXTRACT (MONTH FROM to_date (FPRO."Projects_activation_forecast_date", 'mm/dd/yyyy')) as "Projects_Activation_Month",
+
+
+
+                                FDSH."Dashboar_Status",
+                                FDSH."Dashboar_RF_Rank",
+                                FDSH."Dashboar_Flagged_Project",
+                                FDSH."Dashboar_Project_subtype",
+                                FDSH."Dashboar_Ready_to_Construct_F",
+                                FDSH."Dashboar_Ready_to_Construct_A",
+                                FDSH."Dashboar_PM_Project_Manager_Group",
+                                FDSH."Dashboar_C_Band_bucket"
+
+                            FROM public.vzw_fuze_loc FLOC
+                            LEFT JOIN public.vzw_fuze_proj FPRO ON FLOC."Projects_Fuze_project_id" = FPRO."Projects_Fuze_project_id"
+                            LEFT JOIN public.vzw_fuze_dash FDSH ON FLOC."Projects_Fuze_project_id" = FDSH."Dashboar_Fuze_project_id"
+                            WHERE "Projects_local_market" IN ('Salt Lake City','Helena','Boise')
+                            ;
+                            COMMIT;
+                    
+################################################################################
+################################################################################
+### 2022-07-02 04:30:04.490300
+### Inserting values in PostgreSQL table: 
+### 2022-07-02 04:30:58.692919
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-02 05:00:02.727206
+### 1) Extracting data from xLPT ....
+### Jul_02_2022 : Importing xLPT Report
+          DAY HR  ... RRC_Reest_Succ_%_QCI_5 RRC_Reest_Succ_%_QCI_1
+0  07/01/2022  0  ...                  99.07                  100.0
+1  07/01/2022  0  ...                 100.00                    0.0
+2  07/01/2022  0  ...                 100.00                    0.0
+3  07/01/2022  0  ...                   0.00                    0.0
+4  07/01/2022  0  ...                  95.45                    0.0
+
+[5 rows x 190 columns]
+### 2022-07-02 05:33:26.554712
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-02 05:33:26.826235
+### Inserting values in PostgreSQL table: 
+### 2022-07-02 05:39:28.344423
+################################################################################
+################################################################################
+########## Jul_02_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+Empty DataFrame
+Columns: [Projects_Fuze_project_id, Projects_parent_solution_id, Projects_site_info_id, Projects_spm_project_tracker_id, Projects_rfds_project_id, Projects_sub_market, Projects_local_market, Projects_name, Projects_Site_name, Projects_Status, Projects_project_scope, Projects_trans_contr_bandwidth, Projects_plan_year, Projects_por, Projects_pl_initiative, Projects_pl_rationale, Projects_proj_category, Projects_pslc, Projects_Subtype, Projects_rf_rank, Projects_modification_type, Projects_type, Projects_site_type, Projects_atoll_site_latitude, Projects_atoll_site_longitude, Projects_sarf_latitude, Projects_sarf_longitude, Projects_activation_forecast_date, Projects_trans_dt]
+Index: []
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dash_view 
+
+                    
+Empty DataFrame
+Columns: [Dashboar_Fuze_project_id, Dashboar_Status, Dashboar_RF_Rank, Dashboar_Flagged_Project, Dashboar_Project_group_PM, Dashboar_Project_subtype, Dashboar_Landlord, Dashboar_Ready_to_Construct_F, Dashboar_Ready_to_Construct_A, Dashboar_PM_Project_Manager_Group, Dashboar_C_Band_bucket]
+Index: []
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dates_view
+
+                    
+Empty DataFrame
+Columns: [Date_Fuze_project_id, Date_construction_ready_completed_date, Date_physical_Construction_Completed_A_date, Date_equipment_complete_completed_date, Date_activation_completed_date_A_date, Date_rfds_completed_date, Date_integration_ready_A, Date_inservice_forecast_date]
+Index: []
+########## Jul_02_2022 : Generating Geo location for QGIS from Fuze information
+Processing MySQL Query...  
+                    SELECT 
+                        * 
+                    FROM public.vzw_fuze_proj
+                    WHERE 
+                        (
+                            "Projects_atoll_site_latitude" is NOT Null
+                            OR
+                            "Projects_sarf_latitude" is NOT Null
+                        )
+                        AND
+                        (
+                            "Projects_atoll_site_longitude" is NOT Null
+                            OR
+                            "Projects_sarf_longitude" is NOT Null
+                        )
+                        
+                    
+################################################################################
+################################################################################
+### 2022-07-03 04:30:04.833505
+### Inserting values in PostgreSQL table: 
+### 2022-07-03 04:30:57.596199
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-03 05:00:02.687471
+### 1) Extracting data from xLPT ....
+### Jul_03_2022 : Importing xLPT Report
+          DAY HR  ... RRC_Reest_Succ_%_QCI_5 RRC_Reest_Succ_%_QCI_1
+0  07/02/2022  0  ...                  100.0                    0.0
+1  07/02/2022  0  ...                  100.0                    0.0
+2  07/02/2022  0  ...                  100.0                  100.0
+3  07/02/2022  0  ...                  100.0                    0.0
+4  07/02/2022  0  ...                    0.0                    0.0
+
+[5 rows x 190 columns]
+### 2022-07-03 05:30:08.271015
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-03 05:30:08.533124
+### Inserting values in PostgreSQL table: 
+### 2022-07-03 05:36:11.289857
+################################################################################
+################################################################################
+########## Jul_03_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+  Projects_Fuze_project_id  ... Projects_trans_dt
+0                 16906051  ...        2022-07-02
+1                 16386823  ...        2022-07-02
+2                 16952373  ...        2022-07-02
+3                  2566906  ...        2022-07-02
+4                 16729625  ...        2022-07-02
+
+[5 rows x 29 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dash_view 
+
+                    
+  Dashboar_Fuze_project_id  ... Dashboar_C_Band_bucket
+0                 15264623  ...                   None
+1                  2195358  ...                   None
+2                 16261671  ...                   None
+3                 15389873  ...                   None
+4                 16497512  ...                   None
+
+[5 rows x 11 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dates_view
+
+                    
+  Date_Fuze_project_id  ... Date_inservice_forecast_date
+0              2516829  ...                   1900-01-01
+1             16386780  ...                   2021-04-30
+2             15032689  ...                         None
+3             15031863  ...                         None
+4              2226893  ...                         None
+
+[5 rows x 8 columns]
+########## Jul_03_2022 : Generating Geo location for QGIS from Fuze information
+Processing MySQL Query...  
+                    SELECT 
+                        * 
+                    FROM public.vzw_fuze_proj
+                    WHERE 
+                        (
+                            "Projects_atoll_site_latitude" is NOT Null
+                            OR
+                            "Projects_sarf_latitude" is NOT Null
+                        )
+                        AND
+                        (
+                            "Projects_atoll_site_longitude" is NOT Null
+                            OR
+                            "Projects_sarf_longitude" is NOT Null
+                        )
+                        
+                    
+Creating geo locations... 
+Processing MySQL Query Creating Table...  
+    
+                            BEGIN;
+                            DROP TABLE IF EXISTS public.vzw_fuze_qgis;
+
+                            CREATE TABLE public.vzw_fuze_qgis as
+                            SELECT 
+                                FLOC."Projects_Fuze_project_id",
+                                FLOC."Projects_parent_solution_id",
+                                FLOC."Projects_site_info_id",
+                                FLOC."lat",
+                                FLOC."lon",
+                                FLOC."geometry",
+
+                                FPRO."Projects_local_market",
+                                FPRO."Projects_name",
+                                FPRO."Projects_Site_name",
+                                FPRO."Projects_Status",
+                                FPRO."Projects_project_scope",
+                                FPRO."Projects_trans_contr_bandwidth",
+                                FPRO."Projects_plan_year",
+                                FPRO."Projects_por",
+                                FPRO."Projects_pl_initiative",
+                                FPRO."Projects_pl_rationale",
+                                FPRO."Projects_proj_category",
+                                FPRO."Projects_pslc",
+                                FPRO."Projects_Subtype",
+                                FPRO."Projects_rf_rank",
+                                FPRO."Projects_modification_type",
+                                FPRO."Projects_type",
+                                FPRO."Projects_site_type",
+                                FPRO."Projects_activation_forecast_date",
+                                EXTRACT (MONTH FROM to_date (FPRO."Projects_activation_forecast_date", 'mm/dd/yyyy')) as "Projects_Activation_Month",
+
+
+
+                                FDSH."Dashboar_Status",
+                                FDSH."Dashboar_RF_Rank",
+                                FDSH."Dashboar_Flagged_Project",
+                                FDSH."Dashboar_Project_subtype",
+                                FDSH."Dashboar_Ready_to_Construct_F",
+                                FDSH."Dashboar_Ready_to_Construct_A",
+                                FDSH."Dashboar_PM_Project_Manager_Group",
+                                FDSH."Dashboar_C_Band_bucket"
+
+                            FROM public.vzw_fuze_loc FLOC
+                            LEFT JOIN public.vzw_fuze_proj FPRO ON FLOC."Projects_Fuze_project_id" = FPRO."Projects_Fuze_project_id"
+                            LEFT JOIN public.vzw_fuze_dash FDSH ON FLOC."Projects_Fuze_project_id" = FDSH."Dashboar_Fuze_project_id"
+                            WHERE "Projects_local_market" IN ('Salt Lake City','Helena','Boise')
+                            ;
+                            COMMIT;
+                    
+################################################################################
+################################################################################
+### 2022-07-04 04:30:04.382413
+### Inserting values in PostgreSQL table: 
+### 2022-07-04 04:30:57.661011
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-04 05:00:02.622456
+### 1) Extracting data from xLPT ....
+### Jul_04_2022 : Importing xLPT Report
+          DAY HR  ... RRC_Reest_Succ_%_QCI_5 RRC_Reest_Succ_%_QCI_1
+0  07/03/2022  0  ...                 100.00                    0.0
+1  07/03/2022  0  ...                 100.00                    0.0
+2  07/03/2022  0  ...                  99.44                  100.0
+3  07/03/2022  0  ...                 100.00                  100.0
+4  07/03/2022  0  ...                 100.00                  100.0
+
+[5 rows x 190 columns]
+### 2022-07-04 05:30:03.707776
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-04 05:30:03.897878
+### Inserting values in PostgreSQL table: 
+### 2022-07-04 05:36:55.203629
+################################################################################
+################################################################################
+########## Jul_04_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+  Projects_Fuze_project_id  ... Projects_trans_dt
+0                 16906051  ...        2022-07-03
+1                  2566906  ...        2022-07-03
+2                 16386823  ...        2022-07-03
+3                 16952373  ...        2022-07-03
+4                 16729625  ...        2022-07-03
+
+[5 rows x 29 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dash_view 
+
+                    
+  Dashboar_Fuze_project_id  ... Dashboar_C_Band_bucket
+0                 16947632  ...                   None
+1                  2187970  ...                   None
+2                 15195367  ...                   None
+3                 15030571  ...                   None
+4                 16220968  ...                   None
+
+[5 rows x 11 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dates_view
+
+                    
+  Date_Fuze_project_id  ... Date_inservice_forecast_date
+0              2176847  ...                   2019-11-30
+1             15031515  ...                   2022-09-30
+2             16270448  ...                   2024-04-30
+3             15744177  ...                   2018-06-30
+4              2469594  ...                   2018-01-03
+
+[5 rows x 8 columns]
+########## Jul_04_2022 : Generating Geo location for QGIS from Fuze information
+Processing MySQL Query...  
+                    SELECT 
+                        * 
+                    FROM public.vzw_fuze_proj
+                    WHERE 
+                        (
+                            "Projects_atoll_site_latitude" is NOT Null
+                            OR
+                            "Projects_sarf_latitude" is NOT Null
+                        )
+                        AND
+                        (
+                            "Projects_atoll_site_longitude" is NOT Null
+                            OR
+                            "Projects_sarf_longitude" is NOT Null
+                        )
+                        
+                    
+Creating geo locations... 
+Processing MySQL Query Creating Table...  
+    
+                            BEGIN;
+                            DROP TABLE IF EXISTS public.vzw_fuze_qgis;
+
+                            CREATE TABLE public.vzw_fuze_qgis as
+                            SELECT 
+                                FLOC."Projects_Fuze_project_id",
+                                FLOC."Projects_parent_solution_id",
+                                FLOC."Projects_site_info_id",
+                                FLOC."lat",
+                                FLOC."lon",
+                                FLOC."geometry",
+
+                                FPRO."Projects_local_market",
+                                FPRO."Projects_name",
+                                FPRO."Projects_Site_name",
+                                FPRO."Projects_Status",
+                                FPRO."Projects_project_scope",
+                                FPRO."Projects_trans_contr_bandwidth",
+                                FPRO."Projects_plan_year",
+                                FPRO."Projects_por",
+                                FPRO."Projects_pl_initiative",
+                                FPRO."Projects_pl_rationale",
+                                FPRO."Projects_proj_category",
+                                FPRO."Projects_pslc",
+                                FPRO."Projects_Subtype",
+                                FPRO."Projects_rf_rank",
+                                FPRO."Projects_modification_type",
+                                FPRO."Projects_type",
+                                FPRO."Projects_site_type",
+                                FPRO."Projects_activation_forecast_date",
+                                EXTRACT (MONTH FROM to_date (FPRO."Projects_activation_forecast_date", 'mm/dd/yyyy')) as "Projects_Activation_Month",
+
+
+
+                                FDSH."Dashboar_Status",
+                                FDSH."Dashboar_RF_Rank",
+                                FDSH."Dashboar_Flagged_Project",
+                                FDSH."Dashboar_Project_subtype",
+                                FDSH."Dashboar_Ready_to_Construct_F",
+                                FDSH."Dashboar_Ready_to_Construct_A",
+                                FDSH."Dashboar_PM_Project_Manager_Group",
+                                FDSH."Dashboar_C_Band_bucket"
+
+                            FROM public.vzw_fuze_loc FLOC
+                            LEFT JOIN public.vzw_fuze_proj FPRO ON FLOC."Projects_Fuze_project_id" = FPRO."Projects_Fuze_project_id"
+                            LEFT JOIN public.vzw_fuze_dash FDSH ON FLOC."Projects_Fuze_project_id" = FDSH."Dashboar_Fuze_project_id"
+                            WHERE "Projects_local_market" IN ('Salt Lake City','Helena','Boise')
+                            ;
+                            COMMIT;
+                    
+################################################################################
+################################################################################
+### 2022-07-05 04:30:05.135498
+### Inserting values in PostgreSQL table: 
+### 2022-07-05 04:30:58.353732
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-05 05:00:02.351465
+### 1) Extracting data from xLPT ....
+### Jul_05_2022 : Importing xLPT Report
+          DAY HR  ... RRC_Reest_Succ_%_QCI_5 RRC_Reest_Succ_%_QCI_1
+0  07/04/2022  0  ...                 100.00                   0.00
+1  07/04/2022  0  ...                 100.00                 100.00
+2  07/04/2022  0  ...                  95.65                  66.67
+3  07/04/2022  0  ...                 100.00                   0.00
+4  07/04/2022  0  ...                 100.00                   0.00
+
+[5 rows x 190 columns]
+### 2022-07-05 05:42:08.589481
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-05 05:42:08.878959
+### Inserting values in PostgreSQL table: 
+### 2022-07-05 05:48:31.087920
+################################################################################
+################################################################################
+########## Jul_05_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+  Projects_Fuze_project_id  ... Projects_trans_dt
+0                 16386823  ...        2022-07-04
+1                  2566906  ...        2022-07-04
+2                 16952373  ...        2022-07-04
+3                 16729625  ...        2022-07-04
+4                 16906051  ...        2022-07-04
+
+[5 rows x 29 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dash_view 
+
+                    
+  Dashboar_Fuze_project_id  ... Dashboar_C_Band_bucket
+0                  2489399  ...                   None
+1                  2078586  ...                   None
+2                 15187007  ...                   None
+3                 16275161  ...                   None
+4                 16645123  ...                   None
+
+[5 rows x 11 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dates_view
+
+                    
+  Date_Fuze_project_id  ... Date_inservice_forecast_date
+0             16147961  ...                   2022-08-05
+1             16147984  ...                   2023-05-27
+2             16144193  ...                   2022-02-11
+3             16144470  ...                   2023-08-05
+4             16120965  ...                   2021-10-01
+
+[5 rows x 8 columns]
+########## Jul_05_2022 : Generating Geo location for QGIS from Fuze information
+Processing MySQL Query...  
+                    SELECT 
+                        * 
+                    FROM public.vzw_fuze_proj
+                    WHERE 
+                        (
+                            "Projects_atoll_site_latitude" is NOT Null
+                            OR
+                            "Projects_sarf_latitude" is NOT Null
+                        )
+                        AND
+                        (
+                            "Projects_atoll_site_longitude" is NOT Null
+                            OR
+                            "Projects_sarf_longitude" is NOT Null
+                        )
+                        
+                    
+Creating geo locations... 
+Processing MySQL Query Creating Table...  
+    
+                            BEGIN;
+                            DROP TABLE IF EXISTS public.vzw_fuze_qgis;
+
+                            CREATE TABLE public.vzw_fuze_qgis as
+                            SELECT 
+                                FLOC."Projects_Fuze_project_id",
+                                FLOC."Projects_parent_solution_id",
+                                FLOC."Projects_site_info_id",
+                                FLOC."lat",
+                                FLOC."lon",
+                                FLOC."geometry",
+
+                                FPRO."Projects_local_market",
+                                FPRO."Projects_name",
+                                FPRO."Projects_Site_name",
+                                FPRO."Projects_Status",
+                                FPRO."Projects_project_scope",
+                                FPRO."Projects_trans_contr_bandwidth",
+                                FPRO."Projects_plan_year",
+                                FPRO."Projects_por",
+                                FPRO."Projects_pl_initiative",
+                                FPRO."Projects_pl_rationale",
+                                FPRO."Projects_proj_category",
+                                FPRO."Projects_pslc",
+                                FPRO."Projects_Subtype",
+                                FPRO."Projects_rf_rank",
+                                FPRO."Projects_modification_type",
+                                FPRO."Projects_type",
+                                FPRO."Projects_site_type",
+                                FPRO."Projects_activation_forecast_date",
+                                EXTRACT (MONTH FROM to_date (FPRO."Projects_activation_forecast_date", 'mm/dd/yyyy')) as "Projects_Activation_Month",
+
+
+
+                                FDSH."Dashboar_Status",
+                                FDSH."Dashboar_RF_Rank",
+                                FDSH."Dashboar_Flagged_Project",
+                                FDSH."Dashboar_Project_subtype",
+                                FDSH."Dashboar_Ready_to_Construct_F",
+                                FDSH."Dashboar_Ready_to_Construct_A",
+                                FDSH."Dashboar_PM_Project_Manager_Group",
+                                FDSH."Dashboar_C_Band_bucket"
+
+                            FROM public.vzw_fuze_loc FLOC
+                            LEFT JOIN public.vzw_fuze_proj FPRO ON FLOC."Projects_Fuze_project_id" = FPRO."Projects_Fuze_project_id"
+                            LEFT JOIN public.vzw_fuze_dash FDSH ON FLOC."Projects_Fuze_project_id" = FDSH."Dashboar_Fuze_project_id"
+                            WHERE "Projects_local_market" IN ('Salt Lake City','Helena','Boise')
+                            ;
+                            COMMIT;
+                    
+################################################################################
+################################################################################
+### 2022-07-07 04:30:14.368388
+### 1) Extracting data from 5G xLPT ....
+################################################################################
+################################################################################
+### 2022-07-07 05:00:01.979980
+### 1) Extracting data from xLPT ....
+### Jul_07_2022 : Importing xLPT Report
+          DAY HR  ... RRC_Reest_Succ_%_QCI_5 RRC_Reest_Succ_%_QCI_1
+0  07/06/2022  0  ...                  98.91                  100.0
+1  07/06/2022  0  ...                 100.00                    0.0
+2  07/06/2022  0  ...                 100.00                    0.0
+3  07/06/2022  0  ...                 100.00                    0.0
+4  07/06/2022  0  ...                 100.00                    0.0
+
+[5 rows x 190 columns]
+### 2022-07-07 05:36:06.315298
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-07 05:36:06.893854
+### Inserting values in PostgreSQL table: 
+### 2022-07-07 05:42:39.299067
+################################################################################
+################################################################################
+########## Jul_07_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+  Projects_Fuze_project_id  ... Projects_trans_dt
+0                 16906051  ...        2022-07-06
+1                 16952373  ...        2022-07-06
+2                 16729625  ...        2022-07-06
+3                 16386823  ...        2022-07-06
+4                  2566906  ...        2022-07-06
+
+[5 rows x 29 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dash_view 
+
+                    
+  Dashboar_Fuze_project_id  ... Dashboar_C_Band_bucket
+0                 16953176  ...                   None
+1                 16949978  ...                   None
+2                 16953899  ...                   None
+3                 16211433  ...                   None
+4                 15324567  ...                   None
+
+[5 rows x 11 columns]
+Processing Hive Query... 
+    
+                        SELECT *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_dates_view
+
+                    
+  Date_Fuze_project_id  ... Date_inservice_forecast_date
+0              2177454  ...                   2016-10-09
+1             15271175  ...                         None
+2             16232398  ...                   2020-07-15
+3             16092297  ...                   2022-09-02
+4             16185258  ...                   2020-08-15
+
+[5 rows x 8 columns]
+########## Jul_07_2022 : Generating Geo location for QGIS from Fuze information
+Processing MySQL Query...  
+                    SELECT 
+                        * 
+                    FROM public.vzw_fuze_proj
+                    WHERE 
+                        (
+                            "Projects_atoll_site_latitude" is NOT Null
+                            OR
+                            "Projects_sarf_latitude" is NOT Null
+                        )
+                        AND
+                        (
+                            "Projects_atoll_site_longitude" is NOT Null
+                            OR
+                            "Projects_sarf_longitude" is NOT Null
+                        )
+                        
+                    
+Creating geo locations... 
+Processing MySQL Query Creating Table...  
+    
+                            BEGIN;
+                            DROP TABLE IF EXISTS public.vzw_fuze_qgis;
+
+                            CREATE TABLE public.vzw_fuze_qgis as
+                            SELECT 
+                                FLOC."Projects_Fuze_project_id",
+                                FLOC."Projects_parent_solution_id",
+                                FLOC."Projects_site_info_id",
+                                FLOC."lat",
+                                FLOC."lon",
+                                FLOC."geometry",
+
+                                FPRO."Projects_local_market",
+                                FPRO."Projects_name",
+                                FPRO."Projects_Site_name",
+                                FPRO."Projects_Status",
+                                FPRO."Projects_project_scope",
+                                FPRO."Projects_trans_contr_bandwidth",
+                                FPRO."Projects_plan_year",
+                                FPRO."Projects_por",
+                                FPRO."Projects_pl_initiative",
+                                FPRO."Projects_pl_rationale",
+                                FPRO."Projects_proj_category",
+                                FPRO."Projects_pslc",
+                                FPRO."Projects_Subtype",
+                                FPRO."Projects_rf_rank",
+                                FPRO."Projects_modification_type",
+                                FPRO."Projects_type",
+                                FPRO."Projects_site_type",
+                                FPRO."Projects_activation_forecast_date",
+                                EXTRACT (MONTH FROM to_date (FPRO."Projects_activation_forecast_date", 'mm/dd/yyyy')) as "Projects_Activation_Month",
+
+
+
+                                FDSH."Dashboar_Status",
+                                FDSH."Dashboar_RF_Rank",
+                                FDSH."Dashboar_Flagged_Project",
+                                FDSH."Dashboar_Project_subtype",
+                                FDSH."Dashboar_Ready_to_Construct_F",
+                                FDSH."Dashboar_Ready_to_Construct_A",
+                                FDSH."Dashboar_PM_Project_Manager_Group",
+                                FDSH."Dashboar_C_Band_bucket"
+
+                            FROM public.vzw_fuze_loc FLOC
+                            LEFT JOIN public.vzw_fuze_proj FPRO ON FLOC."Projects_Fuze_project_id" = FPRO."Projects_Fuze_project_id"
+                            LEFT JOIN public.vzw_fuze_dash FDSH ON FLOC."Projects_Fuze_project_id" = FDSH."Dashboar_Fuze_project_id"
+                            WHERE "Projects_local_market" IN ('Salt Lake City','Helena','Boise')
+                            ;
+                            COMMIT;
+                    
+################################################################################
+################################################################################
+### 2022-07-12 04:30:09.195499
+### 1) Extracting data from 5G xLPT ....
+################################################################################
+################################################################################
+### 2022-07-12 05:00:02.551416
+### 1) Extracting data from xLPT ....
+### Jul_12_2022 : Importing xLPT Report
+          DAY HR  ... RRC_Reest_Succ_%_QCI_5 RRC_Reest_Succ_%_QCI_1
+0  07/11/2022  0  ...                  100.0                  100.0
+1  07/11/2022  0  ...                  100.0                    0.0
+2  07/11/2022  0  ...                  100.0                    0.0
+3  07/11/2022  0  ...                  100.0                    0.0
+4  07/11/2022  0  ...                  100.0                    0.0
+
+[5 rows x 190 columns]
+### 2022-07-12 05:31:55.673361
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-12 05:31:55.982636
+### Inserting values in PostgreSQL table: 
+### 2022-07-12 05:38:01.954621
+################################################################################
+################################################################################
+########## Jul_12_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-07-14 04:30:07.828621
+### 1) Extracting data from 5G xLPT ....
+##### Jul_14_2022 : Importing xLPT 5G Report
+          DAY  ...  5G_NR_Radio_PUSCH_UE_PHR_lt_0_dB_%
+0  07/13/2022  ...                               32.46
+1  07/13/2022  ...                               55.57
+2  07/13/2022  ...                               25.53
+3  07/13/2022  ...                               44.75
+4  07/13/2022  ...                               48.71
+
+[5 rows x 83 columns]
+##### 2022-07-14 04:34:50.220523 : Completed import 5Gx LPT
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-14 04:34:50.546657
+### Inserting values in PostgreSQL table: 
+################################################################################
+################################################################################
+### 2022-07-14 05:00:02.880307
+### 1) Extracting data from xLPT ....
+### Jul_14_2022 : Importing xLPT Report
+          DAY HR  ... RRC_Reest_Succ_%_QCI_5 RRC_Reest_Succ_%_QCI_1
+0  07/13/2022  0  ...                  100.0                    0.0
+1  07/13/2022  0  ...                  100.0                    0.0
+2  07/13/2022  0  ...                  100.0                    0.0
+3  07/13/2022  0  ...                  100.0                    0.0
+4  07/13/2022  0  ...                  100.0                  100.0
+
+[5 rows x 190 columns]
+### 2022-07-14 05:32:52.420258
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-14 05:32:52.648112
+### Inserting values in PostgreSQL table: 
+### 2022-07-14 05:42:47.556533
+################################################################################
+################################################################################
+########## Jul_14_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-07-14 11:16:03.243730
+### 1) Extracting data from xLPT ....
+### Jul_14_2022 : Importing xLPT Report
+          DAY  HR  ... RRC_Reest_Succ_%_QCI_5 RRC_Reest_Succ_%_QCI_1
+0  07/13/2022   0  ...                 100.00                  100.0
+1  07/13/2022   0  ...                  99.06                  100.0
+2  07/13/2022   0  ...                  88.89                  100.0
+3  07/13/2022   0  ...                  96.97                    0.0
+4  07/13/2022   0  ...                 100.00                  100.0
+
+[5 rows x 187 columns]
+### 2022-07-14 11:20:06.607359
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-14 11:20:06.835598
+### Inserting values in PostgreSQL table: 
+### 2022-07-14 11:20:59.745507
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-14 12:00:03.665767
+### 1) Extracting data from xLPT ....
+### Jul_14_2022 : Importing xLPT Report
+          DAY  HR  ... VoLTE_IA%_num    VoLTE_IA%_den
+0  07/13/2022   0  ...  740781893412   38980940493132
+1  07/13/2022   0  ...    9536117409   11470686435117
+2  07/13/2022   0  ...      15943653       4844408580
+3  07/13/2022   0  ...   44790717960  132481977727680
+4  07/13/2022   0  ...   21727136484   60060531711744
+
+[5 rows x 193 columns]
+### 2022-07-14 12:04:45.266495
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-14 12:04:45.433312
+### Inserting values in PostgreSQL table: 
+################################################################################
+################################################################################
+### 2022-07-14 12:07:03.811142
+### 1) Extracting data from xLPT ....
+### Jul_14_2022 : Importing xLPT Report
+          DAY  HR  ... VoLTE_IA%_num    VoLTE_IA%_den
+0  07/13/2022   0  ...  740781893412   38980940493132
+1  07/13/2022   0  ...    9536117409   11470686435117
+2  07/13/2022   0  ...      15943653       4844408580
+3  07/13/2022   0  ...   44790717960  132481977727680
+4  07/13/2022   0  ...   21727136484   60060531711744
+
+[5 rows x 193 columns]
+### 2022-07-14 12:10:57.204304
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-14 12:10:57.431568
+### Inserting values in PostgreSQL table: 
+################################################################################
+################################################################################
+### 2022-07-14 13:15:03.697180
+### 1) Extracting data from xLPT ....
+### Jul_14_2022 : Importing xLPT Report
+          DAY  HR  ... VoLTE_IA%_num    VoLTE_IA%_den
+0  07/13/2022   0  ...  740781893412   38980940493132
+1  07/13/2022   0  ...    9536117409   11470686435117
+2  07/13/2022   0  ...      15943653       4844408580
+3  07/13/2022   0  ...   44790717960  132481977727680
+4  07/13/2022   0  ...   21727136484   60060531711744
+
+[5 rows x 193 columns]
+### 2022-07-14 13:18:48.686166
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-14 13:18:48.911533
+### Inserting values in PostgreSQL table: 
+########## Jul_15_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-07-15 13:15:03.624577
+### 1) Extracting data from xLPT ....
+### Jul_15_2022 : Importing xLPT Report
+          DAY  HR  ... VoLTE_IA%_num   VoLTE_IA%_den
+0  07/14/2022   0  ...      77098800     11877728304
+1  07/14/2022   0  ...   11466767376  37327653568656
+2  07/14/2022   0  ...     242654412    530471202492
+3  07/14/2022   0  ...      16010280     14508988200
+4  07/14/2022   0  ...    6215751360  22128573579840
+
+[5 rows x 193 columns]
+### 2022-07-15 13:19:43.088020
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-15 13:19:43.292473
+### Inserting values in PostgreSQL table: 
+########## Jul_16_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-07-16 13:15:03.240969
+### 1) Extracting data from xLPT ....
+### Jul_16_2022 : Importing xLPT Report
+          DAY  HR  ... VoLTE_IA%_num     VoLTE_IA%_den
+0  07/15/2022   0  ...      23967328       16525472656
+1  07/15/2022   0  ...  380823587144  1038355255557620
+2  07/15/2022   0  ...    1684963720     1681181676240
+3  07/15/2022   0  ...      78266160       31943218860
+4  07/15/2022   0  ...    5796614772    20385226653012
+
+[5 rows x 193 columns]
+### 2022-07-16 13:19:23.325606
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-16 13:19:23.544206
+### Inserting values in PostgreSQL table: 
+########## Jul_17_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-07-17 13:15:03.567641
+### 1) Extracting data from xLPT ....
+### Jul_17_2022 : Importing xLPT Report
+          DAY  HR  ... VoLTE_IA%_num    VoLTE_IA%_den
+0  07/16/2022   0  ...      47782336      27598480000
+1  07/16/2022   0  ...  158699315808  239314275524016
+2  07/16/2022   0  ...     439634808     682889761008
+3  07/16/2022   0  ...    3504987658      65904353280
+4  07/16/2022   0  ...  386031945576   34424194686648
+
+[5 rows x 193 columns]
+### 2022-07-17 13:19:33.130190
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-17 13:19:33.337896
+### Inserting values in PostgreSQL table: 
+########## Jul_18_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-07-18 13:15:02.296788
+### 1) Extracting data from xLPT ....
+### Jul_18_2022 : Importing xLPT Report
+          DAY  HR  ...  VoLTE_IA%_num    VoLTE_IA%_den
+0  07/17/2022   0  ...    14911510512   28598994864912
+1  07/17/2022   0  ...     4404108808    5502813578120
+2  07/17/2022   0  ...       20470944       9677416320
+3  07/17/2022   0  ...  2615186953968  487851711817968
+4  07/17/2022   0  ...      445774890     326290320840
+
+[5 rows x 193 columns]
+### 2022-07-18 13:20:10.352970
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-18 13:20:10.499497
+### Inserting values in PostgreSQL table: 
+########## Jul_19_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-07-19 13:15:02.986138
+### 1) Extracting data from xLPT ....
+### Jul_19_2022 : Importing xLPT Report
+          DAY  HR  ... VoLTE_IA%_num   VoLTE_IA%_den
+0  07/18/2022   0  ...             0               0
+1  07/18/2022   0  ...     285713568     13250491488
+2  07/18/2022   0  ...  423915675432  14995282234272
+3  07/18/2022   0  ...  179351781315    715372474740
+4  07/18/2022   0  ...     400965968      3997033040
+
+[5 rows x 193 columns]
+### 2022-07-19 13:19:25.373247
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-19 13:19:25.599119
+### Inserting values in PostgreSQL table: 
+################################################################################
+################################################################################
+### 2022-07-20 13:15:04.758488
+### 1) Extracting data from xLPT ....
+### Jul_20_2022 : Importing xLPT Report
+          DAY  HR  ... VoLTE_IA%_num   VoLTE_IA%_den
+0  07/19/2022   0  ...          1793          803768
+1  07/19/2022   0  ...      36342175      5900893375
+2  07/19/2022   0  ...   19496084520  49697512892720
+3  07/19/2022   0  ...     605359392   1176408064800
+4  07/19/2022   0  ...    1572809292     10883226312
+
+[5 rows x 193 columns]
+### 2022-07-20 13:19:42.076669
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-20 13:19:42.296400
+### Inserting values in PostgreSQL table: 
+################################################################################
+################################################################################
+### 2022-07-21 13:15:03.104091
+### 1) Extracting data from xLPT ....
+### Jul_21_2022 : Importing xLPT Report
+          DAY  HR  ...  VoLTE_IA%_num   VoLTE_IA%_den
+0  07/20/2022   0  ...    28446251584  89102527973664
+1  07/20/2022   0  ...     7897826592  12750970788288
+2  07/20/2022   0  ...        1870512       501338544
+3  07/20/2022   0  ...              0               0
+4  07/20/2022   0  ...  1151729159400  74058775038600
+
+[5 rows x 193 columns]
+### 2022-07-21 13:23:02.823190
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+### 2022-07-21 13:23:03.111173
+### Inserting values in PostgreSQL table: 
+########## Jul_22_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-07-22 13:15:02.214477
+### 1) Extracting data from xLPT ....
+### Jul_22_2022 : Importing xLPT Report
+          DAY  ... Peak_#_UE_In_Connected_Mode
+0  07/21/2022  ...                          45
+1  07/21/2022  ...                         483
+2  07/21/2022  ...                        2047
+3  07/21/2022  ...                         530
+4  07/21/2022  ...                         233
+
+[5 rows x 70 columns]
+########## Jul_23_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-07-23 13:15:03.182598
+### 1) Extracting data from xLPT ....
+### Jul_23_2022 : Importing xLPT Report
+          DAY  ... Peak_#_UE_In_Connected_Mode
+0  07/22/2022  ...                          43
+1  07/22/2022  ...                         538
+2  07/22/2022  ...                        1942
+3  07/22/2022  ...                         522
+4  07/22/2022  ...                         240
+
+[5 rows x 70 columns]
+########## Jul_24_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-07-24 13:15:02.540191
+### 1) Extracting data from xLPT ....
+### Jul_24_2022 : Importing xLPT Report
+          DAY  ... Peak_#_UE_In_Connected_Mode
+0  07/23/2022  ...                          39
+1  07/23/2022  ...                         550
+2  07/23/2022  ...                        4437
+3  07/23/2022  ...                         452
+4  07/23/2022  ...                         264
+
+[5 rows x 70 columns]
+########## Jul_25_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-07-25 13:15:03.040063
+### 1) Extracting data from xLPT ....
+### Jul_25_2022 : Importing xLPT Report
+          DAY       MMEPOOL  ... VoLTE_IA%_den  Peak_#_UE_In_Connected_Mode
+0  07/24/2022  Mountain_IoT  ...             0                           42
+1  07/24/2022  Mountain_IoT  ...             0                          532
+2  07/24/2022  Mountain_IoT  ...             0                         2528
+3  07/24/2022  Mountain_IoT  ...             0                          742
+4  07/24/2022  Mountain_IoT  ...             0                          246
+
+[5 rows x 70 columns]
+########## Jul_26_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-07-26 13:15:02.951912
+### 1) Extracting data from xLPT ....
+### Jul_26_2022 : Importing xLPT Report
+          DAY  ... Peak_#_UE_In_Connected_Mode
+0  07/25/2022  ...                          38
+1  07/25/2022  ...                         496
+2  07/25/2022  ...                        1431
+3  07/25/2022  ...                         519
+4  07/25/2022  ...                         202
+
+[5 rows x 70 columns]
+########## Jul_27_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-08-04 13:15:08.331107
+### 1) Extracting data from xLPT ....
+### Aug_04_2022 : Importing xLPT Report
+Empty DataFrame
+Columns: [DAY, MMEPOOL, REGION, MARKET, MARKET_DESC, SITE, ENODEB, SIP_Average_Call_Setup_Time_ms, SIP_Average_Call_Time_sec, SIP_Average_Disconnect_Time_ms, SIP_Average_Post_Dial_Delay_Time_ms, SIP_Call_Answers, SIP_Call_Attempts, SIP_Call_Completions, SIP_Call_Drops, SIP_Call_Failures, SIP_Call_Setup_Completes, SIP_Call_Setup_Failures, SIP_Call_Setup_Time_ms, SIP_Calls_With_a_Leg, SIP_SEER, SIP_Short_Calls, SIP_Total_Calls, SIP_Total_MOU, SIP_True_Setup_Success, RTP_Gap_Duration_Ratio_Avg%_den, RTP_Gap_Duration_Ratio_Avg%_num, RTP_Gap_Length_Avg_Sec_per_Gap, S1U_SIP_AvgCallSetupTime_ms, S1U_SIP_AvgCallTime_sec, S1U_SIP_AvgDisconnectTime_ms, S1U_SIP_AvgPostDialDelayTime_ms, S1U_SIP_SC_SEER, SIP_DC_Rate_Including_Handover_num, SIP_DC_Rate_Including_Handover_den, Total_Call_Drops, Total_Call_Successful, Total_Call_Timeouts, Abnormal_UE_Releases, Abnormal_UE_Releases_MME, Abnormal_UE_Releases_RBS, Bearer_Drop%_Den, Bearer_Drop%_Num, Bearer_Setup_Failure%_Den, Bearer_Setup_Failure%_Num, Cell_Availability, Cell_Throughput_Mbps, Cell_UL_Throughput_Mbps, Context_Drop%_Den, Context_Drop%_Num, Context_Setup_Failure%_Den, Context_Setup_Failure%_Num, DL_Scheduler_Delay_msec, Downlink_Data_Volume_MB, Downlink_Throughput_in_Mbps, ERAB_Drop_%_den, ERAB_Drop_%_num, PDCCH_Util_1_symbol_num, PDCCH_Util_2_symbols_num, PDCCH_Utili_3_symbols_num, PDCCH_Utili_x_symbols_den, PeakActive_UEs, Peak_Number_UE_In_Connected_Mode, RRC_Setup_Failure%_Den, RRC_Setup_Failure%_Num, Setup_Fail%_Den, Setup_Fail%_Num, VoLTE_IA%_num, VoLTE_IA%_den, Peak_#_UE_In_Connected_Mode]
+Index: []
+########## Aug_05_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-08-05 13:15:02.696825
+### 1) Extracting data from xLPT ....
+########## Aug_06_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-08-06 13:15:02.250962
+### 1) Extracting data from xLPT ....
+################################################################################
+################################################################################
+### 2022-08-08 13:15:13.335136
+### 1) Extracting data from xLPT ....
+### Aug_08_2022 : Importing xLPT Report
+          DAY       MMEPOOL  ... VoLTE_IA%_den  Peak_#_UE_In_Connected_Mode
+0  08/07/2022  Mountain_IoT  ...             0                           51
+1  08/07/2022  Mountain_IoT  ...             0                          456
+2  08/07/2022  Mountain_IoT  ...             0                         1234
+3  08/07/2022  Mountain_IoT  ...             0                          604
+4  08/07/2022  Mountain_IoT  ...             0                          259
+
+[5 rows x 70 columns]
+########## Aug_09_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-08-09 13:15:03.443386
+### 1) Extracting data from xLPT ....
+### Aug_09_2022 : Importing xLPT Report
+          DAY       MMEPOOL  ... VoLTE_IA%_den  Peak_#_UE_In_Connected_Mode
+0  08/08/2022  Mountain_IoT  ...             0                           42
+1  08/08/2022  Mountain_IoT  ...             0                          463
+2  08/08/2022  Mountain_IoT  ...             0                         1744
+3  08/08/2022  Mountain_IoT  ...             0                          680
+4  08/08/2022  Mountain_IoT  ...             0                          240
+
+[5 rows x 70 columns]
+################################################################################
+################################################################################
+### 2022-08-10 13:15:07.279892
+### 1) Extracting data from xLPT ....
+### Aug_10_2022 : Importing xLPT Report
+          DAY       MMEPOOL  ... VoLTE_IA%_den  Peak_#_UE_In_Connected_Mode
+0  08/09/2022  Mountain_IoT  ...             0                           37
+1  08/09/2022  Mountain_IoT  ...             0                          482
+2  08/09/2022  Mountain_IoT  ...             0                         1429
+3  08/09/2022  Mountain_IoT  ...             0                          584
+4  08/09/2022  Mountain_IoT  ...             0                          204
+
+[5 rows x 70 columns]
+################################################################################
+################################################################################
+### 2022-08-11 13:15:07.521906
+### 1) Extracting data from xLPT ....
+### Aug_11_2022 : Importing xLPT Report
+          DAY       MMEPOOL  ... VoLTE_IA%_den  Peak_#_UE_In_Connected_Mode
+0  08/10/2022  Mountain_IoT  ...             0                           39
+1  08/10/2022  Mountain_IoT  ...             0                          483
+2  08/10/2022  Mountain_IoT  ...             0                         1435
+3  08/10/2022  Mountain_IoT  ...             0                          560
+4  08/10/2022  Mountain_IoT  ...             0                          208
+
+[5 rows x 70 columns]
+########## Aug_12_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-08-12 13:15:02.454821
+### 1) Extracting data from xLPT ....
+### Aug_12_2022 : Importing xLPT Report
+          DAY       MMEPOOL  ... VoLTE_IA%_den  Peak_#_UE_In_Connected_Mode
+0  08/11/2022  Mountain_IoT  ...             0                            0
+1  08/11/2022  Mountain_IoT  ...             0                            0
+2  08/11/2022  Mountain_IoT  ...             0                            0
+3  08/11/2022  Mountain_IoT  ...             0                            0
+4  08/11/2022  Mountain_IoT  ...             0                            0
+
+[5 rows x 70 columns]
+########## Aug_13_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-08-13 13:15:02.917323
+### 1) Extracting data from xLPT ....
+### Aug_13_2022 : Importing xLPT Report
+          DAY       MMEPOOL  ... VoLTE_IA%_den  Peak_#_UE_In_Connected_Mode
+0  08/12/2022  Mountain_IoT  ...             0                           46
+1  08/12/2022  Mountain_IoT  ...             0                          477
+2  08/12/2022  Mountain_IoT  ...             0                         1491
+3  08/12/2022  Mountain_IoT  ...             0                          581
+4  08/12/2022  Mountain_IoT  ...             0                          348
+
+[5 rows x 70 columns]
+########## Aug_14_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-08-14 13:15:03.124210
+### 1) Extracting data from xLPT ....
+### Aug_14_2022 : Importing xLPT Report
+          DAY       MMEPOOL  ... VoLTE_IA%_den  Peak_#_UE_In_Connected_Mode
+0  08/13/2022  Mountain_IoT  ...             0                           40
+1  08/13/2022  Mountain_IoT  ...             0                          551
+2  08/13/2022  Mountain_IoT  ...             0                         1399
+3  08/13/2022  Mountain_IoT  ...             0                          552
+4  08/13/2022  Mountain_IoT  ...             0                          231
+
+[5 rows x 70 columns]
+########## Aug_15_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-08-15 13:15:05.500009
+### 1) Extracting data from xLPT ....
+### Aug_15_2022 : Importing xLPT Report
+          DAY  ... Peak_#_UE_In_Connected_Mode
+0  08/14/2022  ...                          47
+1  08/14/2022  ...                         448
+2  08/14/2022  ...                        1357
+3  08/14/2022  ...                         561
+4  08/14/2022  ...                         243
+
+[5 rows x 70 columns]
+########## Aug_16_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-08-16 13:15:03.101782
+### 1) Extracting data from xLPT ....
+### Aug_16_2022 : Importing xLPT Report
+          DAY  ... Peak_#_UE_In_Connected_Mode
+0  08/15/2022  ...                          48
+1  08/15/2022  ...                         451
+2  08/15/2022  ...                        1473
+3  08/15/2022  ...                         634
+4  08/15/2022  ...                         199
+
+[5 rows x 70 columns]
+################################################################################
+################################################################################
+### 2022-08-17 13:15:03.426629
+### 1) Extracting data from xLPT ....
+### Aug_17_2022 : Importing xLPT Report
+          DAY  ... Peak_#_UE_In_Connected_Mode
+0  08/16/2022  ...                          48
+1  08/16/2022  ...                         452
+2  08/16/2022  ...                        1378
+3  08/16/2022  ...                         591
+4  08/16/2022  ...                         202
+
+[5 rows x 70 columns]
+################################################################################
+################################################################################
+### 2022-08-18 13:15:04.225017
+### 1) Extracting data from xLPT ....
+### Aug_18_2022 : Importing xLPT Report
+          DAY  ... Peak_#_UE_In_Connected_Mode
+0  08/17/2022  ...                          48
+1  08/17/2022  ...                         475
+2  08/17/2022  ...                        1731
+3  08/17/2022  ...                         726
+4  08/17/2022  ...                         211
+
+[5 rows x 70 columns]
+########## Aug_19_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-08-19 13:15:06.171227
+### 1) Extracting data from xLPT ....
+### Aug_19_2022 : Importing xLPT Report
+          DAY  ... Peak_#_UE_In_Connected_Mode
+0  08/18/2022  ...                          43
+1  08/18/2022  ...                         420
+2  08/18/2022  ...                        1376
+3  08/18/2022  ...                         593
+4  08/18/2022  ...                         209
+
+[5 rows x 70 columns]
+########## Aug_20_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-08-20 13:15:03.068939
+### 1) Extracting data from xLPT ....
+### Aug_20_2022 : Importing xLPT Report
+          DAY  ... Peak_#_UE_In_Connected_Mode
+0  08/19/2022  ...                          43
+1  08/19/2022  ...                         469
+2  08/19/2022  ...                        1420
+3  08/19/2022  ...                         601
+4  08/19/2022  ...                         250
+
+[5 rows x 70 columns]
+########## Aug_21_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-08-21 13:15:02.318144
+### 1) Extracting data from xLPT ....
+### Aug_21_2022 : Importing xLPT Report
+          DAY  ... Peak_#_UE_In_Connected_Mode
+0  08/20/2022  ...                          49
+1  08/20/2022  ...                         543
+2  08/20/2022  ...                        1215
+3  08/20/2022  ...                         531
+4  08/20/2022  ...                         248
+
+[5 rows x 70 columns]
+########## Aug_22_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-08-22 13:15:02.387124
+### 1) Extracting data from xLPT ....
+### Aug_22_2022 : Importing xLPT Report
+          DAY  ... Peak_#_UE_In_Connected_Mode
+0  08/21/2022  ...                          46
+1  08/21/2022  ...                         462
+2  08/21/2022  ...                        1166
+3  08/21/2022  ...                         644
+4  08/21/2022  ...                         246
+
+[5 rows x 70 columns]
+########## Aug_23_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-08-23 13:15:03.090805
+### 1) Extracting data from xLPT ....
+### Aug_23_2022 : Importing xLPT Report
+          DAY  ... Peak_#_UE_In_Connected_Mode
+0  08/22/2022  ...                          39
+1  08/22/2022  ...                         435
+2  08/22/2022  ...                        1359
+3  08/22/2022  ...                         616
+4  08/22/2022  ...                         210
+
+[5 rows x 70 columns]
+################################################################################
+################################################################################
+### 2022-08-24 13:15:10.124720
+### 1) Extracting data from xLPT ....
+### Aug_24_2022 : Importing xLPT Report
+Empty DataFrame
+Columns: [DAY, MMEPOOL, REGION, MARKET, MARKET_DESC, SITE, ENODEB, SIP_Average_Call_Setup_Time_ms, SIP_Average_Call_Time_sec, SIP_Average_Disconnect_Time_ms, SIP_Average_Post_Dial_Delay_Time_ms, SIP_Call_Answers, SIP_Call_Attempts, SIP_Call_Completions, SIP_Call_Drops, SIP_Call_Failures, SIP_Call_Setup_Completes, SIP_Call_Setup_Failures, SIP_Call_Setup_Time_ms, SIP_Calls_With_a_Leg, SIP_SEER, SIP_Short_Calls, SIP_Total_Calls, SIP_Total_MOU, SIP_True_Setup_Success, RTP_Gap_Duration_Ratio_Avg%_den, RTP_Gap_Duration_Ratio_Avg%_num, RTP_Gap_Length_Avg_Sec_per_Gap, S1U_SIP_AvgCallSetupTime_ms, S1U_SIP_AvgCallTime_sec, S1U_SIP_AvgDisconnectTime_ms, S1U_SIP_AvgPostDialDelayTime_ms, S1U_SIP_SC_SEER, SIP_DC_Rate_Including_Handover_num, SIP_DC_Rate_Including_Handover_den, Total_Call_Drops, Total_Call_Successful, Total_Call_Timeouts, Abnormal_UE_Releases, Abnormal_UE_Releases_MME, Abnormal_UE_Releases_RBS, Bearer_Drop%_Den, Bearer_Drop%_Num, Bearer_Setup_Failure%_Den, Bearer_Setup_Failure%_Num, Cell_Availability, Cell_Throughput_Mbps, Cell_UL_Throughput_Mbps, Context_Drop%_Den, Context_Drop%_Num, Context_Setup_Failure%_Den, Context_Setup_Failure%_Num, DL_Scheduler_Delay_msec, Downlink_Data_Volume_MB, Downlink_Throughput_in_Mbps, ERAB_Drop_%_den, ERAB_Drop_%_num, PDCCH_Util_1_symbol_num, PDCCH_Util_2_symbols_num, PDCCH_Utili_3_symbols_num, PDCCH_Utili_x_symbols_den, PeakActive_UEs, Peak_Number_UE_In_Connected_Mode, RRC_Setup_Failure%_Den, RRC_Setup_Failure%_Num, Setup_Fail%_Den, Setup_Fail%_Num, VoLTE_IA%_num, VoLTE_IA%_den, Peak_#_UE_In_Connected_Mode]
+Index: []
+########## Aug_25_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-08-25 13:15:05.060900
+### 1) Extracting data from xLPT ....
+### Aug_25_2022 : Importing xLPT Report
+          DAY  ... Peak_#_UE_In_Connected_Mode
+0  08/24/2022  ...                          34
+1  08/24/2022  ...                         521
+2  08/24/2022  ...                        1875
+3  08/24/2022  ...                         854
+4  08/24/2022  ...                         221
+
+[5 rows x 70 columns]
+########## Aug_26_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-08-26 13:15:06.250403
+### 1) Extracting data from xLPT ....
+### Aug_26_2022 : Importing xLPT Report
+          DAY  ... Peak_#_UE_In_Connected_Mode
+0  08/25/2022  ...                          41
+1  08/25/2022  ...                         450
+2  08/25/2022  ...                        1375
+3  08/25/2022  ...                         685
+4  08/25/2022  ...                         234
+
+[5 rows x 70 columns]
+########## Aug_27_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-08-29 13:15:10.641686
+### 1) Extracting data from xLPT ....
+### Aug_29_2022 : Importing xLPT Report
+          DAY  ... Peak_#_UE_In_Connected_Mode
+0  08/28/2022  ...                          43
+1  08/28/2022  ...                         421
+2  08/28/2022  ...                        1160
+3  08/28/2022  ...                         555
+4  08/28/2022  ...                         235
+
+[5 rows x 70 columns]
+########## Aug_30_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-08-30 13:15:03.152952
+### 1) Extracting data from xLPT ....
+### Aug_30_2022 : Importing xLPT Report
+          DAY  ... Peak_#_UE_In_Connected_Mode
+0  08/29/2022  ...                          37
+1  08/29/2022  ...                         417
+2  08/29/2022  ...                        1319
+3  08/29/2022  ...                         625
+4  08/29/2022  ...                         190
+
+[5 rows x 70 columns]
+################################################################################
+################################################################################
+### 2022-08-31 13:15:02.856249
+### 1) Extracting data from xLPT ....
+### Aug_31_2022 : Importing xLPT Report
+          DAY  ... Peak_#_UE_In_Connected_Mode
+0  08/30/2022  ...                          58
+1  08/30/2022  ...                         413
+2  08/30/2022  ...                        1352
+3  08/30/2022  ...                         588
+4  08/30/2022  ...                         185
+
+[5 rows x 70 columns]
+################################################################################
+################################################################################
+### 2022-09-01 13:15:02.106878
+### 1) Extracting data from xLPT ....
+### Sep_01_2022 : Importing xLPT Report
+          DAY  ... Peak_#_UE_In_Connected_Mode
+0  08/31/2022  ...                          41
+1  08/31/2022  ...                         464
+2  08/31/2022  ...                        1388
+3  08/31/2022  ...                         660
+4  08/31/2022  ...                         190
+
+[5 rows x 70 columns]
+########## Sep_02_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-09-06 13:15:02.848300
+### 1) Extracting data from xLPT ....
+### Sep_06_2022 : Importing xLPT Report
+          DAY  ... Peak_#_UE_In_Connected_Mode
+0  09/05/2022  ...                          50
+1  09/05/2022  ...                         461
+2  09/05/2022  ...                        1258
+3  09/05/2022  ...                         535
+4  09/05/2022  ...                         248
+
+[5 rows x 70 columns]
+########## Sep_07_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-09-07 13:15:03.318607
+### 1) Extracting data from xLPT ....
+### Sep_07_2022 : Importing xLPT Report
+          DAY  ... Peak_#_UE_In_Connected_Mode
+0  09/06/2022  ...                          41
+1  09/06/2022  ...                         419
+2  09/06/2022  ...                        1428
+3  09/06/2022  ...                         639
+4  09/06/2022  ...                         194
+
+[5 rows x 70 columns]
+########## Sep_08_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-09-08 13:15:02.631616
+### 1) Extracting data from xLPT ....
+### Sep_08_2022 : Importing xLPT Report
+          DAY  ... Peak_#_UE_In_Connected_Mode
+0  09/07/2022  ...                          38
+1  09/07/2022  ...                         459
+2  09/07/2022  ...                        1432
+3  09/07/2022  ...                         656
+4  09/07/2022  ...                         205
+
+[5 rows x 70 columns]
+########## Sep_09_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-09-12 13:16:12.200172
+### 1) Extracting data from xLPT ....
+### Sep_12_2022 : Importing xLPT Report
+          DAY       MMEPOOL  ...          VoLTE_IA%_den  Peak_#_UE_In_Connected_Mode
+0  09/11/2022  Mountain_IoT  ...         20165194969920                           46
+1  09/11/2022  Mountain_IoT  ...    1736712164427239940                          422
+2  09/11/2022  Mountain_IoT  ...  967159622362803000000                         1313
+3  09/11/2022  Mountain_IoT  ...   20190919680096977000                          563
+4  09/11/2022  Mountain_IoT  ...     199276249129140128                          224
+
+[5 rows x 70 columns]
+########## Sep_13_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+################################################################################
+################################################################################
+### 2022-09-13 13:15:12.463492
+### 1) Extracting data from xLPT ....
+########## Sep_16_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+########## Sep_20_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+########## Sep_22_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+########## Sep_23_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+########## Sep_24_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+########## Sep_25_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+########## Sep_26_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+########## Oct_04_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+########## Oct_05_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+########## Oct_06_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+########## Oct_07_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+########## Oct_11_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+########## Oct_12_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+########## Oct_14_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+########## Oct_15_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+########## Oct_16_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+########## Oct_17_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+########## Oct_18_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+########## Oct_19_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
+########## Oct_20_2022 : Extracting Fuze informaiton fron NDL
+Processing Hive Query... 
+                        SELECT
+                        *
+                        FROM  fuze_presto_views.dmp_rfds_sp_fuze_projects_view
+
+                    
