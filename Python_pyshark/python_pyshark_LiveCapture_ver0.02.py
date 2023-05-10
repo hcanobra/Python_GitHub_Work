@@ -32,11 +32,7 @@ def func1():
     v_host = "15.181.163.0"
 
     try:
-<<<<<<<< HEAD:Python_pyshark/python_pshark_LiveCapture_ver_(working).py
         capture.sniff(packet_count=10)
-========
-        capture.sniff(packet_count=20)
->>>>>>>> 49815ea7e619a17cdc3fa06719df2d1a0f3d7ce4:Python_pyshark/python_pyshark_LiveCapture_ver0.02.py
         func2()
 
     except KeyboardInterrupt:
