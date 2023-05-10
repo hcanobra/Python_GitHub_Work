@@ -32,7 +32,8 @@ def func1():
     v_host = "15.181.163.0"
 
     try:
-        capture.sniff(packet_count=20)
+        capture.sniff(packet_count=2,
+                    timeout=5)
         func2()
 
     except KeyboardInterrupt:
@@ -57,9 +58,9 @@ def func2():
                 data['ttl'] = packet.ip.ttl
                 
 
-                #v_df1 = v_df1.append(data,ignore_index=True)
+                v_df1 = v_df1.append(data,ignore_index=True)
 
-                print(data)
+                print(v_df1)
 
     
     except KeyboardInterrupt:
