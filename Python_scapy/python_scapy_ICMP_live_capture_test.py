@@ -68,8 +68,8 @@ for cycle in range(10):
         v_ttl = v_ttl + 1
         
     #Load dataframe to PostgreSQL
-    if v_df1.empty == False:
-        f_postgresql_new_table (v_df1)
+    #if v_df1.empty == False:
+    #    f_postgresql_new_table (v_df1)
 
 
     #v_df = pd.concat([v_df,v_df1], axis=0)
