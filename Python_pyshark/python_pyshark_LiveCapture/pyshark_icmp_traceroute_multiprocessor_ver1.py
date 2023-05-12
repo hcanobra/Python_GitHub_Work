@@ -138,16 +138,16 @@ def func2_ICMP_trace ():
     # --> This "for loop" is the key pease on the Trace route, the objective is just to
     # --> perform a ICMP ping incrementing the TTL, this will discover the next hop on the route
     for ttl in range (v_ttl):
-        subprocess.run(["ping", "15.181.163.0 -s 1472 -c 1 -i 0.1 -t 1 " , "-m {0}".format(ttl)], stdout=subprocess.DEVNULL)
-                       #             |             |     |     |     |          |       |                       |
-                       #             |             |     |     |     |          |       |                       o----> Removes the command from the output
-                       #             |             |     |     |     |          |       o----------------------------> Adds the TTL value inside the ICMP command
-                       #             |             |     |     |     |          o------------------------------------> Wild card for TTL variable
-                       #             |             |     |     |     o-----------------------------------------------> Timeout in seconds
-                       #             |             |     |     o-----------------------------------------------------> Timer between ICMP packets wait-time
-                       #             |             |     o-----------------------------------------------------------> Will send one ICMP packet
-                       #             |             o-----------------------------------------------------------------> MTU size
-                       #             o-------------------------------------------------------------------------------> Destination IP
+        subprocess.run(["ping", "15.181.163.0" , "-s" , "1472" , "-c" , "1" , "-i" , "0.1" , "-t" , "1" , "-m {0}".format(ttl)], stdout=subprocess.DEVNULL)
+                       #             |                    |              |             |             |         |           |                  |
+                       #             |                    |              |             |             |         |           |                  o----> Removes the command from the output
+                       #             |                    |              |             |             |         |           o-----------------------> Adds the TTL value inside the ICMP command
+                       #             |                    |              |             |             |         o-----------------------------------> Wild card for TTL variable
+                       #             |                    |              |             |             o---------------------------------------------> Timeout in seconds
+                       #             |                    |              |             o-----------------------------------------------------------> Timer between ICMP packets wait-time
+                       #             |                    |              o-------------------------------------------------------------------------> Will send one ICMP packet
+                       #             |                    o----------------------------------------------------------------------------------------> MTU size
+                       #             o-------------------------------------------------------------------------------------------------------------> Destination IP
     
     # Sets a time when the ICMP test cycle ends, point of reference just to calculate how long it took the test
     v_end_icmp = datetime.datetime.now()
@@ -206,7 +206,7 @@ os.system('clear')
 v_times = 3
 
 for _ in range(v_times):
-    
+    os.system('clear')
     v_time_stamps = pcap_times()    # Initiating the class
     
     if __name__ == '__main__':
