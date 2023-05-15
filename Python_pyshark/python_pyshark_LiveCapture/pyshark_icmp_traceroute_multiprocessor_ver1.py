@@ -44,8 +44,8 @@ class pcap_capture:
     '''
     Class description:
     This class does all the magic, it initiates the interface and the pcap filter characteristics 
-    executes the pyshark, processes the frames and sends the frame data to be processed later somewhere
-    this can be PostgreSQL, Prometheus or MongoDB
+    the filter executes the frame during the pyshark capture, another function processes the frames 
+    and sends the frame data to be processed later somewhere, this can be PostgreSQL, Prometheus or MongoDB.
     '''
     def __init__(self):
         '''
@@ -72,6 +72,7 @@ class pcap_capture:
         fields, those fields are the only relevant to calculate the RTT information for all
         network elements from point A ---> Z on the traceroute.
         '''
+        
         self.pkt_inf = {}
         
         for self.packet in self.capture.sniff_continuously():
@@ -105,16 +106,20 @@ class pcap_capture:
     def pkt_process (self):
         '''
         Function description:
-        
+        This function is the repository where the relevant data from the PCAP frames lands
+        at this time I am just doing a basic print. I can integrate this function to load 
+        the frame information to a PostgreSQL, Prometheus or MongoDB data bases.
         '''
+        
         print (self.pkt_inf)
 
 
 def func1_f_packet_capture ():
     '''
     Function description:
-    
+    Process 1 main function, it initiates pyshark global variables initiates the PCAP capture
     '''
+    
     pkt = pcap_capture()        # Initiate Class, the purpose is just to load the interface configuration,
                                 # this improves performance during the packet capture.
 
