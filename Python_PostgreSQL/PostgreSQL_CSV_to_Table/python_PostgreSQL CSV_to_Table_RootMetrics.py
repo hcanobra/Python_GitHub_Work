@@ -10,7 +10,7 @@ pwd
 import sys
   
 # adding Folder_2 to the system path
-sys.path.append('/Users/canobhu/Documents/GitHub/GitHub/Python_API')
+sys.path.append('/storage/emulated/0/Documents/Pydroid3/site-packages')
 
 from numpy import isnan
 import numpy as np

@@ -169,7 +169,7 @@ def f_terminate_process():
 os.system('clear')
 
 '''
-====> This section defines how many test cycles will be run
+====> This section defines how many test cycles will be runsource 
 '''
 v_times = 1
 
