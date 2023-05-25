@@ -3,10 +3,10 @@ import os
 import time
 
 def f_global_definitions ():
-    v_bw = ['40M']
+    v_bw = ['40M','60','80','100']
     v_test = [1]
-    v_date = '04032023'
-    v_directory = '/Users/hcanobra/Documents/Dreamscape/pcap_tcp/'
+    v_date = '05222023'
+    v_directory = '/Users/hcanobra/Documents/GitHub_Repository/GitHub_Could_Projects/Python_GitHub_Work/Python_Dreamscape/pcap_tcp/'
 
     return (v_bw, v_test, v_date, v_directory)
 
@@ -61,28 +61,28 @@ def func2():
             time.sleep(5)
             print ('>> Func2: Starting IPERF on TCP.. ')
 
-            v_command = ('iperf3 -c 15.181.163.0 -t 30 -b %s -R --timestamp >> %sReadme_pcap_tcp_%s_%s_NVIDIA_%s.txt'%(bw,v_directory,v_date,bw,test))
-            #               |     |      |        | |   |  |  |       |        |       |          | |     |    |        |       |        |    |   |
-            #               |     |      |        | |   |  |  |       |        |       |          | |     |    |        |       |        |    |   o---> Parameter:Defined from variable
-            #               |     |      |        | |   |  |  |       |        |       |          | |     |    |        |       |        |    o-------> Parameter: Defined from variable
-            #               |     |      |        | |   |  |  |       |        |       |          | |     |    |        |       |        o------------> Parameter: Defined from variable
-            #               |     |      |        | |   |  |  |       |        |       |          | |     |    |        |       o---------------------> Parameter: Defined from variable
-            #               |     |      |        | |   |  |  |       |        |       |          | |     |    |        o-----------------------------> Parameter: Defined from variable
-            #               |     |      |        | |   |  |  |       |        |       |          | |     |    o--------------------------------------> Variable: Includes the test cycle ID (1,2,3,4,5...)
-            #               |     |      |        | |   |  |  |       |        |       |          | |     o-------------------------------------------> Value: Naming standard
-            #               |     |      |        | |   |  |  |       |        |       |          | o-------------------------------------------------> Variable: Includes the BW on the file name
-            #               |     |      |        | |   |  |  |       |        |       |          o---------------------------------------------------> Variable: Includes the date on the file name
-            #               |     |      |        | |   |  |  |       |        |       o--------------------------------------------------------------> Value: Naming standard
-            #               |     |      |        | |   |  |  |       |        o----------------------------------------------------------------------> Variable: Includes de directory from v_directory variable
-            #               |     |      |        | |   |  |  |       o-------------------------------------------------------------------------------> Parameter: We wil include the timestamp information
-            #               |     |      |        | |   |  |  o---------------------------------------------------------------------------------------> Parameter: Indicates that we will be using IPERF as reversed (transmitting from remote host)
-            #               |     |      |        | |   |  o------------------------------------------------------------------------------------------> Variable: Includes the bit rate of the transfer this value comes from variable BW
-            #               |     |      |        | |   o---------------------------------------------------------------------------------------------> Parameter: Defines de Bandwidth speed to transmit
-            #               |     |      |        | o-------------------------------------------------------------------------------------------------> Value: Defines the length of the test specified in seconds
-            #               |     |      |        o---------------------------------------------------------------------------------------------------> Parameter: Indicates that we will define time as the length of the test
-            #               |     |      o------------------------------------------------------------------------------------------------------------> Value: IPERF server ip address
-            #               |     o-------------------------------------------------------------------------------------------------------------------> Parameter: Indicates that we will run IPERF as client
-            #               o-------------------------------------------------------------------------------------------------------------------------> Command: Runs IPERF
+            v_command = ('docker run -it --rm networkstatic/iperf3 -c 15.181.163.0 -t 5 -b %s -R --timestamp >> %sReadme_pcap_tcp_%s_%s_NVIDIA_%s.txt'%(bw,v_directory,v_date,bw,test))
+            #                                                 |     |      |        | |   |  |  |       |        |       |          | |     |    |        |       |        |    |   |
+            #                                                 |     |      |        | |   |  |  |       |        |       |          | |     |    |        |       |        |    |   o---> Parameter:Defined from variable
+            #                                                 |     |      |        | |   |  |  |       |        |       |          | |     |    |        |       |        |    o-------> Parameter: Defined from variable
+            #                                                 |     |      |        | |   |  |  |       |        |       |          | |     |    |        |       |        o------------> Parameter: Defined from variable
+            #                                                 |     |      |        | |   |  |  |       |        |       |          | |     |    |        |       o---------------------> Parameter: Defined from variable
+            #                                                 |     |      |        | |   |  |  |       |        |       |          | |     |    |        o-----------------------------> Parameter: Defined from variable
+            #                                                 |     |      |        | |   |  |  |       |        |       |          | |     |    o--------------------------------------> Variable: Includes the test cycle ID (1,2,3,4,5...)
+            #                                                 |     |      |        | |   |  |  |       |        |       |          | |     o-------------------------------------------> Value: Naming standard
+            #                                                 |     |      |        | |   |  |  |       |        |       |          | o-------------------------------------------------> Variable: Includes the BW on the file name
+            #                                                 |     |      |        | |   |  |  |       |        |       |          o---------------------------------------------------> Variable: Includes the date on the file name
+            #                                                 |     |      |        | |   |  |  |       |        |       o--------------------------------------------------------------> Value: Naming standard
+            #                                                 |     |      |        | |   |  |  |       |        o----------------------------------------------------------------------> Variable: Includes de directory from v_directory variable
+            #                                                 |     |      |        | |   |  |  |       o-------------------------------------------------------------------------------> Parameter: We wil include the timestamp information
+            #                                                 |     |      |        | |   |  |  o---------------------------------------------------------------------------------------> Parameter: Indicates that we will be using IPERF as reversed (transmitting from remote host)
+            #                                                 |     |      |        | |   |  o------------------------------------------------------------------------------------------> Variable: Includes the bit rate of the transfer this value comes from variable BW
+            #                                                 |     |      |        | |   o---------------------------------------------------------------------------------------------> Parameter: Defines de Bandwidth speed to transmit
+            #                                                 |     |      |        | o-------------------------------------------------------------------------------------------------> Value: Defines the length of the test specified in seconds
+            #                                                 |     |      |        o---------------------------------------------------------------------------------------------------> Parameter: Indicates that we will define time as the length of the test
+            #                                                 |     |      o------------------------------------------------------------------------------------------------------------> Value: IPERF server ip address
+            #                                                 |     o-------------------------------------------------------------------------------------------------------------------> Parameter: Indicates that we will run IPERF as client
+            #                                                 o-------------------------------------------------------------------------------------------------------------------------> Command: Runs IPERF
 
             print (">> "+v_command)
             os.system (v_command)

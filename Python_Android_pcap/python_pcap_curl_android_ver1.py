@@ -10,38 +10,40 @@ import numpy as np
 import pyshark
 import nest_asyncio
 
+import pandas as pd
+
 v_work_dir = os.path.dirname(__file__)
 v_adb_dir = f'{v_work_dir}/platform-tools/'
 
+
 def f_curl():
-    try:
+    with contextlib.suppress(Exception):
         print ('#######################################')
         print ('# Proc1 => Started ....               #')
         print ('#######################################')
-        
+
         print ('---> Creating temporary PCAP file  ... ')
         os.system(
             f'{v_adb_dir}./adb shell curl -NLs http://127.0.0.1:8080  > {v_work_dir}/android.pcap'
         )
-        
+
         print ('---> Capture ended, cleaning temporary files ... ')
         os.system(
             f'rm {v_work_dir}/android.pcap'
-        )
-    except:
-        pass        
+        )        
 
 def f_pcap():
     time.sleep(3)
     print ('#######################################')
     print ('# Proc2 => Started ....               #')
     print ('#######################################')
-    
+
     v_frame_recorded = []
     pkt_inf = {}
-    try: 
+    
+    with contextlib.suppress(Exception):
         while os.path.exists(f'{v_work_dir}/android.pcap'):
-                    
+            
             cap = pyshark.FileCapture(f'{v_work_dir}/android.pcap') 
             
             for pkt in cap:
@@ -58,16 +60,20 @@ def f_pcap():
                     
                     v_frame_recorded.append(pkt.number)
                     
+                    v_pcap_df = pd.DataFrame(pkt_inf,index=[0])
                     
-                    #p3 = Process(target=f_adb_rf)
-                    #p3.start()
+                    print (v_pcap_df)
                     
-                    print (pkt_inf)
-        
+                    if not os.path.isfile('android.csv'):
+                        
+                        v_pcap_df.to_csv('python_pcap_android.csv', index=False, header=v_ue_info_df.columns)
+                        
+                    else: # else it exists so append without mentioning the header
+                        
+                        v_pcap_df.to_csv('python_pcap_android.csv', mode='a', index=False, header=False)    
+                    
+                    
         print ('======> Not android application running <======')
-        
-    except Exception:
-        pass
 
 def f_adb_rf():
     print ('P3 sarted')

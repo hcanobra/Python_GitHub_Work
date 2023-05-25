@@ -97,12 +97,10 @@ def func1_f_packet_capture ():
     '''
     pkt = pcap_capture()        # Initiate Class, the purpose is just to load the interface configuration,
                                 # this improves performance during the packet capture.
-
-
+    
     pkt.ping_pcap()             # Calls the function ping_pcap, this function will collect the icmp data from the
                                 # icmp frame as they arrive on the wire
-
-
+                                
     return ()
 
 def func2_ICMP ():

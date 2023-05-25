@@ -5,7 +5,7 @@ import time
 def f_global_definitions ():
     v_test = [1,2,3,4,5,6]
     v_date = '04032023'
-    v_directory = '/Users/hcanobra/Documents/Dreamscape/pcap_icmp/'
+    v_directory = '/Users/hcanobra/Documents/GitHub_Repository/GitHub_Could_Projects/Python_GitHub_Work/Python_Dreamscape/pcap_icmp/'
 
     return (v_test, v_date, v_directory)
 
