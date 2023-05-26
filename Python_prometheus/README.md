@@ -22,12 +22,25 @@ Initial version 05/09/2023
 | dataset-C | [download]() |
 
 ## Reference commands:
+- Creation of new enviroment in Python:
+  ```
+  mkdir prometheus_env
+  python3 -m venv /path/to/new/virtual/environment/prometheus_env
+  source /path/to/new/virtual/environment/bin/activate
+  (prometheus_env)
+  ```
+
 - Add records to Prometheus Push Gateway
   ```
   registry = CollectorRegistry()
   g = Gauge('job_last_success_unixtime', 'Last time a batch job successfully finished', registry=registry)
   g.set_to_current_time()
   push_to_gateway('15.181.163.0:9091', job='pcap', registry=registry)
+  ```
+- Installing dependencies
+  ```
+  pip3 install prometheus_client
+  
   ```
 - for test
   ```
