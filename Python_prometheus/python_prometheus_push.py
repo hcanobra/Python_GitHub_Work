@@ -8,4 +8,4 @@ g = Gauge('job_last_success_unixtime', 'Last time a batch job successfully finis
 
 g.set_to_current_time()
 
-push_to_gateway('10.1.1.12:9091', job='pcap', registry=registry)
+push_to_gateway('15.181.163.0:9091', job='MEC_Dreamscape', registry=registry)
