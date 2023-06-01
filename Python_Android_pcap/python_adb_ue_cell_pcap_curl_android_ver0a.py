@@ -16,11 +16,105 @@ import pandas as pd
 
 import subprocess
 
-warnings.simplefilter(action='ignore', category=FutureWarning)
+### -- Prometheus - libs
 
+import pandas as pd
+from prometheus_client import CollectorRegistry, Gauge,Histogram,Summary,Info, push_to_gateway
+import time
+import numpy
+
+
+# Working as a directory input
+class PrometheusClient_Gouge:
+    def __init__(self,kpi_lebels,kpi_dic):
+        
+        self.kpi_lebels = kpi_lebels
+        self.kpi_dic = kpi_dic
+        
+        self.kpi_message = 'Mobile_info'
+        
+        '''
+        self.kpi_lebels = {
+                'Time': '1684959180',
+                'src': '172.217.14.68',
+                'dst': '10.215.173.1'
+        }
+        '''
+        
+        self.kpi_lebels_names = list(self.kpi_lebels.keys())
+        self.kpi_lebels_values = list(self.kpi_lebels.values())
+
+        '''
+        self.kpi_dic = {
+            'Pkt_no': 1,
+            'ttl': 64,
+            'lat': 40.493894,
+            'lon': -111.865829,
+            'Cell_ChannelNumber': 975,
+            'Cell_Pci': 423,
+            'mob_Pci': 423,
+            'length': 132,
+            'RTT': 12,
+            'mob_rssi': -51,
+            'mob_rsrp': -71,
+            'mob_rsrq': -8,
+            'mob_rssnr': 28,
+            'mob_lteLevel': 5,
+            'mob_Earfcn': 975,
+            'Cell_rssi': -51,
+            'Cell_rsrp': -69,
+            'Cell_rsrq': -7,
+        }
+        '''
+
+        # Start up the server to expose the metrics.
+        self.registry = CollectorRegistry()    
+    
+    def Gouge_registry (self):
+                
+        for kpi_name,kpi_value in self.kpi_dic.items():
+            
+            self.g = Gauge(
+                            kpi_name, 
+                            self.kpi_message,
+                            labelnames=self.kpi_lebels_names,
+                            registry=self.registry
+                            )
+            #v_kpi_value = float (kpi_value[0])
+            self.g.labels(self.kpi_lebels_values[0],self.kpi_lebels_values[1]).set(kpi_value)
+
+        self.g = Info(
+                    'MEC_Dreamscape_event', 'Event information',
+                    registry=self.registry   
+                        )
+        self.g.info(self.kpi_lebels)
+            
+
+
+            
+    def Gouge_push(self):
+        
+        push_to_gateway('15.181.163.0:9091',
+                        job='MEC_Dreamscape', 
+                        registry=self.registry)
+
+def f_gauge (kpi_lebels,kpi_dic):
+    
+    #kpi_lebels = kpi_lebels
+    #kpi_dic = kpi_dic
+    prom_instance = PrometheusClient_Gouge(kpi_lebels,kpi_dic)
+    
+    prom_instance.Gouge_registry()
+    
+    prom_instance.Gouge_push()
+
+###### --- #############################################################################
+
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 v_work_dir = os.path.dirname(__file__)
 v_adb_dir = f'{v_work_dir}/platform-tools/'
+
 
 def f_curl():
     try:
@@ -73,17 +167,38 @@ def f_pcap():
                     v_services = f_mServiceState()
                     v_ue = f_ue_SignalStrength()            
                     v_cell =f_cell_mServiceState()
+                    
                     v_ue_info_df = pd.concat([v_pcap_df,v_location,v_services,v_ue,v_cell],axis=1)
-
-                    print (v_ue_info_df)
-
+                    
                     if not os.path.exists(f'{v_work_dir}/android.csv'):
 
                         v_ue_info_df.to_csv(f'{v_work_dir}/android.csv', index=False, header=v_ue_info_df.columns)
 
                     else: # else it exists so append without mentioning the header
 
-                        v_ue_info_df.to_csv(f'{v_work_dir}/android.csv', mode='a', index=False, header=False)                    
+                        v_ue_info_df.to_csv(f'{v_work_dir}/android.csv', mode='a', index=False, header=False)      
+                    
+                    
+                    
+                    #v_ue_info_df = v_ue_info_df.set_index('Pkt_no')
+                    
+                    print (v_ue_info_df)   
+                    
+                    kpi_lebels =  v_ue_info_df[['src','dst']].to_dict('records')          
+
+                    kpi_dic = v_ue_info_df.loc[:,~v_ue_info_df.columns.isin(['src','dst'])].to_dict('records') 
+
+                    ####
+                    
+                    
+                    
+                    ####
+
+                    f_gauge(kpi_lebels[0],kpi_dic[0])
+                    
+                    #print ('Done...??')
+                    
+
 
         print ('======> Not android application running <======')
 
@@ -91,8 +206,7 @@ def f_ue_location():
     '''
     dumpsys location | grep last 
     '''
-    v_df = pd.DataFrame (columns=['Time','Loc'])
-    
+    v_df = pd.DataFrame (columns=['lat','lon'])
     
     v_dir = '/Users/hcanobra/Documents/GitHub_Repository/GitHub_Could_Projects/Python_GitHub_Work/Python_Android_pcap/platform-tools/./adb shell '
     mCellInfo = 'dumpsys location | grep location=Location | grep fused'
@@ -100,14 +214,12 @@ def f_ue_location():
         
     v_split = (re.findall('[0-9]*\d.a?[0-9]*\d,-a?[0-9]*\d.a?[0-9]*\d', v_Location[0]))
     
+    v_df = pd.DataFrame (data = [v_split[0].split(',')[0],v_split[0].split(',')[1]], index= ['lat','lon'])
+    v_df = pd.DataFrame(v_df).transpose()
     
-    v_df['Loc'] = v_split
-    v_df['Time'] = time.time()
-
     return (v_df)
 
 def f_ue_SignalStrength():
-
     '''
     dumpsys telephony.registry | grep mSignalStrength=SignalStrength:
     '''
@@ -157,9 +269,6 @@ def f_ue_SignalStrength():
                     'rsrq',
                     'rssnr',
                     'lteLevel'
-                    
-                    
-                    
                     ]
 
     v_kpi_values = [i for i in v_split if i.split('=')[0] in v_kpi_fields]
@@ -181,8 +290,6 @@ def f_mServiceState():
     mServiceState = 'dumpsys telephony.registry | grep mServiceState='
     v_kpi_mServiceState, null = subprocess.Popen(v_dir+mServiceState, shell=True,stdout=subprocess.PIPE).communicate()[0].decode('utf-8').splitlines()
 
-
-    #print (v_kpi_mServiceState)
 
     '''
     mServiceState=
@@ -303,13 +410,9 @@ def f_mServiceState():
     v_split_2 = (re.findall('([A-zA-Z]\w*=[[].{2,33}[]])', v_kpi_mServiceState))
 
     v_split = v_split_1+v_split_2
-    v_kpi_fields =['mVoiceRegState',
-                    'mDataRegState',
-                    'mChannelNumber',
+    v_kpi_fields =[
                     'mPci',
-                    'mEarfcn',
-                    'mCellBandwidths',
-                    'mBands'
+                    'mEarfcn'
                     ]
     
     v_kpi_values = [i for i in v_split if i.split('=')[0] in v_kpi_fields]
@@ -417,7 +520,6 @@ def f_cell_mServiceState():
 
     v_kpi_fields =[
                     'mPci',
-                    'mEarfcn',
                     'rssi',
                     'rsrp',
                     'rsrq'
@@ -428,25 +530,23 @@ def f_cell_mServiceState():
     v_kpi_list = [i.split('=') for i in v_kpi_values]
 
     v_kpi_list_col_names = [v_kpi_list[i][0] for i in range(len(v_kpi_list))]
-
+    v_kpi_list_col_names= ["Cell_" + sub for sub in v_kpi_list_col_names]
+    
     v_kpi_lst = {}
     
     for i in v_kpi_list:   
         for h in range(len(v_kpi_list)):
-            #print (i[0])
             if v_kpi_list[h][0] == i[0]:
                 v_kpi_lst[v_kpi_list[h][0]] = v_kpi_list[h][1]
-                #print (v_kpi_list[h][0])
-                #print (v_kpi_list[h][1])
+
             
     v_df = pd.DataFrame (data=v_kpi_list)
     
-        
     v_df = pd.DataFrame(v_kpi_list).drop_duplicates().transpose()
 
     v_df = pd.DataFrame(v_df.values[1:], columns=v_df.iloc[0])
     
-    #print (v_df)
+    v_df.columns = v_kpi_list_col_names
     
     return (v_df)
 
