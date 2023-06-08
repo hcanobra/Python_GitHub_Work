@@ -14,15 +14,12 @@ def f_initiate ():
     v_delay = 10
     return (v_df1,v_destination,v_ttl,data,v_delay)
 
-
-
 iface_name = 'en0'
 filter_string = 'host 15.181.163.0'
 capture = pyshark.LiveCapture(
                             interface=iface_name,
                             bpf_filter=filter_string
                             )
-
 
 
 def func1():
@@ -46,6 +43,7 @@ def func1():
 def func2():
     print ('Func2: starting')
     v_df1,v_destination,v_ttl,data,v_delay = f_initiate ()
+    
     try:
         if len(capture) > 0:
             for packet in capture:

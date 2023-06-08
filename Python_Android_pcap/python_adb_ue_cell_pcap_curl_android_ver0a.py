@@ -115,6 +115,22 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 v_work_dir = os.path.dirname(__file__)
 v_adb_dir = f'{v_work_dir}/platform-tools/'
 
+def f_bettery ():
+    
+    
+    v_dir = '/Users/hcanobra/Documents/GitHub_Repository/GitHub_Could_Projects/Python_GitHub_Work/Python_Android_pcap/platform-tools/./adb shell '
+    dumpsys_battery = "dumpsys battery | grep -E 'temperature:|voltage:|level'"
+    null, v_battery_level, v_battery_voltage, v_vattery_temp  = subprocess.Popen(v_dir+dumpsys_battery, shell=True,stdout=subprocess.PIPE).communicate()[0].decode('utf-8').splitlines()
+        
+    v_df = pd.DataFrame (data = [v_battery_level.split(':')[1],v_battery_voltage.split(':')[1],v_vattery_temp.split(':')[1]], index= ['bat_level','bat_voltage','bat_temp'])
+    
+    
+    v_df = pd.DataFrame(v_df).transpose()
+    
+    v_df['bat_temp'] = ((v_df['bat_temp'].astype(float)/10) * (9/5)) + 32 
+    
+    #print (v_df)
+    return (v_df)
 
 def f_curl():
     try:
@@ -148,14 +164,14 @@ def f_pcap():
             cap = pyshark.FileCapture(f'{v_work_dir}/android.pcap') 
 
             for pkt in cap:
-                if pkt.number not in v_frame_recorded:            
+                if pkt.number not in v_frame_recorded and pkt.highest_layer == 'ICMP':            
                     pkt_inf['Pkt_no'] = pkt.number
                     pkt_inf['Time'] = pkt.frame_info.time_epoch
                     pkt_inf['src'] = pkt.ip.src
                     pkt_inf['dst'] = pkt.ip.dst
                     pkt_inf['length'] = pkt.length
                     pkt_inf['ttl'] = pkt.ip.ttl
-                    pkt_inf['Type'] = pkt.icmp.type
+                    pkt_inf['Type'] = pkt.icmp.type if hasattr(pkt.icmp, 'Type') else np.nan
 
                     pkt_inf['RTT'] = pkt.icmp.resptime if hasattr(pkt.icmp, 'resptime') else np.nan
 
@@ -167,8 +183,9 @@ def f_pcap():
                     v_services = f_mServiceState()
                     v_ue = f_ue_SignalStrength()            
                     v_cell =f_cell_mServiceState()
+                    v_bathery = f_bettery ()
                     
-                    v_ue_info_df = pd.concat([v_pcap_df,v_location,v_services,v_ue,v_cell],axis=1)
+                    v_ue_info_df = pd.concat([v_pcap_df,v_location,v_services,v_ue,v_cell,v_bathery],axis=1)
                     
                     if not os.path.exists(f'{v_work_dir}/android.csv'):
 
@@ -194,9 +211,8 @@ def f_pcap():
                     
                     ####
 
-                    f_gauge(kpi_lebels[0],kpi_dic[0])
+                    # f_gauge(kpi_lebels[0],kpi_dic[0])   # ----->> SENDS DATA POINT TO PROMETHEUS DB
                     
-                    #print ('Done...??')
                     
 
 
@@ -549,6 +565,7 @@ def f_cell_mServiceState():
     v_df.columns = v_kpi_list_col_names
     
     return (v_df)
+
 
 # ==> BEGINNING
 os.system('clear')

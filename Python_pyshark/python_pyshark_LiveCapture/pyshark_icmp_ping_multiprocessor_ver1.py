@@ -66,7 +66,7 @@ class pcap_capture:
             
             self.pkt_process ()         # ---> Calls for a function to process the frame, this can be PostgreSQL,
                                         # ---> Prometheus or MongoDB
-            
+        
         return ()
     
     # THIS FUNCITON WILL PROCESS EACH PACKET, THIS CAN BE DF, PostgreSQL, Prometheus or MongoDB
@@ -106,7 +106,7 @@ def func2_ICMP ():
     '''
     time.sleep(3)
     
-    for _ in range(6000):       # --> This value defines the length of the test, 6000 = 10 min (10 pings = 1 sec) this is as a result of interval 0.1
+    for _ in range(60):       # --> This value defines the length of the test, 6000 = 10 min (10 pings = 1 sec) this is as a result of interval 0.1
         subprocess.run(["ping", "15.181.163.0", "-s", "1472", "-c", "1", "-i", "0.1"], stdout=subprocess.DEVNULL)
                         #              |                 |           |            |
                         #              |                 |           |            o-----------> Interval of the ping 0.1 = 1-e10 of a second
@@ -175,6 +175,8 @@ v_times = 1
 
 os.system('clear')
 v_time_stamps = pcap_times()    # Initiating the class
+
+
 
 for _ in range(v_times):
     

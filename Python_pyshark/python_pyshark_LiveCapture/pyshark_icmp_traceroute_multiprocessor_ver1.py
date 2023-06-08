@@ -136,7 +136,7 @@ def func2_ICMP_trace ():
     
     time.sleep(3)               # This delay is set just to let pyshark process to initiate the interface for our capture.
     
-    v_ttl = 100                 # This value is randomly set, the max TTL for the ICMP will be 100
+    v_ttl = 2                 # This value is randomly set, the max TTL for the ICMP will be 100
                                 # however when the ICMP packet reaches the destination the process will be terminated
                                 # as a consequence we will not need to reach the 100 TTL setting.
     
