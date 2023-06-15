@@ -33,7 +33,7 @@ def func2_ICMP ():
     for _ in range(60):       # --> This value defines the length of the test, 6000 = 10 min (10 pings = 1 sec) this is as a result of interval 0.1
         subprocess.run(["ping", "-c", "1", "-s", "1472", "-i", "0.2", "155.146.162.168"], stdout=subprocess.DEVNULL)
         print ("Frame #: ",_+1)
-        time.sleep(1)
+        time.sleep(4)
 
                         
     # Sets a time when the ICMP test cycle ends, point of reference just to calculate how long it took the test

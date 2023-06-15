@@ -190,11 +190,11 @@ class adb_ue_info ():
         
 
         
-        output = subprocess.Popen(self.adb_dir+self.mSignalStrength, shell=True, stdout=subprocess.PIPE)
-        jsonS = json.dumps(output.communicate())
-        print (json.loads(jsonS)['data'])
+        #output = subprocess.Popen(self.adb_dir+self.mSignalStrength, shell=True, stdout=subprocess.PIPE)
+        #jsonS = json.dumps(output.communicate())
+        #print (json.loads(jsonS)['data'])
         
-        data = json.dump(self.mSignalStrength)
+        #data = json.dump(self.mSignalStrength)
         
         self.v_split = (re.findall('[a-zA-Z]\w*=[-]*[0-9]\d*', self.mSignalStrength))
             
