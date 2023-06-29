@@ -20,7 +20,7 @@ def f_global_definitions():
     v_date = today.strftime("%m%d%y")
 
     v_adb_dir = f'{os.path.dirname(__file__)}/platform-tools/'
-    v_mec_sr_ip = '155.146.162.168'
+    v_mec_sr_ip = '15.181.163.0'
 
     return (v_test_cyles,v_bw,today,v_date,v_adb_dir,v_mec_sr_ip,v_protocols)
 
@@ -36,17 +36,17 @@ class iperf3_test:
         self.v_mec_sr_ip = v_mec_sr_ip
         self.v_protocols = v_protocols
         
-        self.v_test_duration = 5                       # This value specifies the length of the IPERF Test
+        self.v_test_duration = 2                       # This value specifies the length of the IPERF Test
         
     def iperf_tcp_start (self,c,b,p):
         v_cycle = c
         v_bw = b
         
         os.system(
-        f"{self.v_adb_dir}./adb shell su 0 '{self.iperf_dir}iperf3 -c {self.v_mec_sr_ip} -t {self.v_test_duration} -R -b {v_bw}'>> {self.v_adb_dir}iperf_tcp_{self.v_date}_C{v_cycle}.txt")
+        f"{self.v_adb_dir}./adb -s NNKS0F0054 shell su 0 '{self.iperf_dir}iperf3 -c {self.v_mec_sr_ip} -t {self.v_test_duration} -R -b {v_bw}'>> {self.v_adb_dir}iperf_tcp_{self.v_date}_C{v_cycle}.txt")
         
         os.system(
-                f"{self.v_adb_dir}./adb shell su 0 'killall tcpdump'"
+                f"{self.v_adb_dir}./adb -s NNKS0F0054 shell su 0 'killall tcpdump'"
                 )   
         
         print ("<< ----- End Iperf3 TCP test... ")
@@ -57,10 +57,10 @@ class iperf3_test:
         v_bw = b
         
         os.system(
-        f"{self.v_adb_dir}./adb shell ping -c 1 -s 1472 -i 0.2 {self.v_mec_sr_ip}>> {self.v_adb_dir}iperf_icmp_{self.v_date}_C{v_cycle}.txt")
+        f"{self.v_adb_dir}./adb -s NNKS0F0054 shell ping -c 1 -s 1472 -i 0.2 {self.v_mec_sr_ip}>> {self.v_adb_dir}iperf_icmp_{self.v_date}_C{v_cycle}.txt")
         
         os.system(
-                f"{self.v_adb_dir}./adb shell su 0 'killall tcpdump'"
+                f"{self.v_adb_dir}./adb -s NNKS0F0054 shell su 0 'killall tcpdump'"
                 ) 
         
         print ("<< ----- End Iperf3 ICMP test... ")
@@ -71,12 +71,12 @@ class iperf3_test:
         v_bw = b
         
         os.system(
-        f"{self.v_adb_dir}./adb shell su 0 '{self.iperf_dir}iperf3 -u -c {self.v_mec_sr_ip} -t {self.v_test_duration} -R -b {v_bw}'>> {self.v_adb_dir}iperf_udp_{self.v_date}_C{v_cycle}.txt")
+        f"{self.v_adb_dir}./adb -s NNKS0F0054 shell su 0 '{self.iperf_dir}iperf3 -u -c {self.v_mec_sr_ip} -t {self.v_test_duration} -R -b {v_bw}'>> {self.v_adb_dir}iperf_udp_{self.v_date}_C{v_cycle}.txt")
         print ("<< ----- End Iperf3 UDP test... ")
         print ('#######################################')
 
         #s.system(
-        #        f"{self.v_adb_dir}./adb shell su 0 'killall tcpdump'"
+        #        f"{self.v_adb_dir}./adb -s NNKS0F0054 shell su 0 'killall tcpdump'"
         #        )  
         
 def proc_iperf():
@@ -177,18 +177,13 @@ class adb_ue_info ():
         self.adb_dir = f'{os.path.dirname(__file__)}/platform-tools/'
         self.iperf_dir = '/data/./data/com.nextdoordeveloper.miperf.miperf/files/' 
         
-        self.v_mec_sr_ip = '155.146.162.168'
+        self.v_mec_sr_ip = '15.181.163.0'
 
-        self.mSignalStrength = './adb shell dumpsys telephony.registry | grep mSignalStrength=SignalStrength:'
-        self.mServiceState = './adb shell dumpsys telephony.registry | grep mServiceState='
-        self.mCellInfo = './adb shell dumpsys telephony.registry | grep mCellInfo='
+        self.mSignalStrength = './adb -s NNKS0F0054 shell dumpsys telephony.registry | grep mSignalStrength=SignalStrength:'
+        self.mServiceState = './adb -s NNKS0F0054 shell dumpsys telephony.registry | grep mServiceState='
+        self.mCellInfo = './adb -s NNKS0F0054 shell dumpsys telephony.registry | grep mCellInfo='
 
-    def f_epoch_time (self):
-        
-        self.v_epoch  = subprocess.Popen( f"{self.adb_dir}./adb -s NNKS0F0054 shell su 0 'echo $EPOCHREALTIME'", shell=True,stdout=subprocess.PIPE).communicate()[0].decode('utf-8').splitlines()[0]
 
-        return (self.v_epoch)
-    
     def f_ue_SignalStrength(self):
         import json
         self.mSignalStrength = subprocess.Popen( self.adb_dir+self.mSignalStrength, shell=True,stdout=subprocess.PIPE).communicate()[0].decode('utf-8').splitlines()[0]
@@ -214,8 +209,6 @@ class adb_ue_info ():
         self.v_kpi_values = [i for i in self.v_split if i.split('=')[0] in self.v_kpi_fields]
         
         self.v_kpi_list = [i.split('=') for i in self.v_kpi_values]
-        
-        self.v_kpi_list = self.v_kpi_list[2:]
         
         self.v_df = pd.DataFrame(self.v_kpi_list).transpose()
         self.v_df = pd.DataFrame(self.v_df.values[1:], columns=self.v_df.iloc[0])
@@ -257,7 +250,7 @@ class adb_ue_info ():
         dumpsys telephony.registry | grep mCellInfo=
         '''
         
-        v_dir = '/Users/hcanobra/Documents/GitHub_Repository/GitHub_Could_Projects/Python_GitHub_Work/Python_Android_pcap/platform-tools/./adb shell '
+        v_dir = '/Users/hcanobra/Documents/GitHub_Repository/GitHub_Could_Projects/Python_GitHub_Work/Python_Android_pcap/platform-tools/./adb -s NNKS0F0054 shell '
         self.mCellInfo = subprocess.Popen(self.adb_dir+self.mCellInfo, shell=True,stdout=subprocess.PIPE).communicate()[0].decode('utf-8').splitlines()[0]
 
         self.mCellInfo= self.mCellInfo.split('CellInfoLte:')
@@ -299,27 +292,18 @@ class adb_ue_info ():
         return (self.v_df)
 
 def adb_rf():
-    import warnings
-    warnings.simplefilter(action='ignore', category=FutureWarning)
-
-    while True:
-        
-        ue_info = adb_ue_info()
-        
-        v_ue_signal = ue_info.f_ue_SignalStrength()
-        
-        v_ue_service = ue_info.f_mServiceState()
-        
-        v_cell_service = ue_info.f_cell_mServiceState()
-        
-        df = pd.concat([v_ue_signal,v_ue_service,v_cell_service], axis=1)
-        
-        df['epoch'] = ue_info.f_epoch_time()
-        
-        print (df)
-        
-        
-        
+    
+    ue_info = adb_ue_info()
+    
+    v_ue_signal = ue_info.f_ue_SignalStrength()
+    print (v_ue_signal)
+    
+    #v_ue_service = ue_info.f_mServiceState()
+    #print (v_ue_service)
+    
+    #v_cell_service = ue_info.f_cell_mServiceState()
+    #print (v_cell_service)
+    
     return ()
 # ==> BEGINNING
 os.system('clear')
@@ -328,27 +312,16 @@ time.sleep (1)
 
 
 if __name__ == '__main__':
-    #p1 = Process(target=proc_iperf)
-    #p2 = Process(target=proc_pcap)
-    p3 = Process (target=adb_rf)
+    p1 = Process(target=proc_iperf)
+    p2 = Process(target=proc_pcap)
+    #p3 = Process (target=adb_rf)
     
-    #p1.start()
-    #p2.start()
-    p3.start()
+    p1.start()
+    p2.start()
+    #p3.start()
 
-    #p1.join()
-    #p2.join()
-    p3.join()
+    p1.join()
+    p2.join()
+    #p3.join()
 
 # ==> END
-
-
-
-
-'''
-
-./adb shell su 0 'tcpdump -vv -i any host 155.146.162.168 -w /storage/emulated/0/Documents/Dreamscape_Pcap/android.pcap'
-"/Users/hcanobra/Documents/GitHub_Repository/GitHub_Could_Projects/Python_GitHub_Work/Python_Dreamscape/NeckBand_proto/./adb shell su 0 'tcpdump -vv -i any host 155.146.162.168 -w  /storage/emulated/0/Documents/Dreamscape_Pcap//android.pcap"
-
-
-'''
