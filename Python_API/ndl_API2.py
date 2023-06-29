@@ -14,7 +14,7 @@ class Connection:
             username = "canobhu"
             #username = input("Username: ")
         if not password:
-            password = "Tpztlan02VH("
+            password = "Tpztlan02VH+"
             #password = getpass("Password: ")
 
         # Parameters used to setup the presto connection with the NDL databases
@@ -28,9 +28,10 @@ class Connection:
             auth=prestodb.auth.BasicAuthentication(username, password)
         )
 
+        self.presto_connection._http_session.verify = False
+        
         # This is used later to execute queries and such
         self.cursor = self.presto_connection.cursor()
-
 
     # Closses the connection to NDL
     def close(self):
@@ -66,7 +67,7 @@ class Connection:
                 df2 = pd.DataFrame(data_rows2)
                 y = y+1
 
-        frames = frames.sample(frac=0.50, replace=True, random_state=1)        
+        frames = frames.sample(frac=0.80, replace=True, random_state=1)        
         
         headers = self.cursor.description
 
