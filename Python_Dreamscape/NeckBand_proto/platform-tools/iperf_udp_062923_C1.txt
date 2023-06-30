@@ -1,0 +1,3 @@
+iperf3: error - unable to connect to server: Network is unreachable
+iperf3: error - unable to connect to server: Network is unreachable
+iperf3: error - unable to connect to server: Network is unreachable
