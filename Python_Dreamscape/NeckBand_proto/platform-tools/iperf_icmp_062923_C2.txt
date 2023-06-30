@@ -1,6 +1,0 @@
-PING 155.146.162.168 (155.146.162.168) 1472(1500) bytes of data.
-1480 bytes from 155.146.162.168: icmp_seq=1 ttl=247 time=58.5 ms
-
---- 155.146.162.168 ping statistics ---
-1 packets transmitted, 1 received, 0% packet loss, time 0ms
-rtt min/avg/max/mdev = 58.590/58.590/58.590/0.000 ms

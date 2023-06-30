@@ -11,8 +11,8 @@ import re
 import pandas as pd
 
 def f_global_definitions():
-    v_test_cyles = 2
-    v_bw = ['10M']
+    v_test_cyles = 4
+    v_bw = ['40M','50M','80''100M']
     v_protocols =  ['TCP','UDP','ICMP']
 
     # Generating Today's lebel	
@@ -36,7 +36,7 @@ class iperf3_test:
         self.v_mec_sr_ip = v_mec_sr_ip
         self.v_protocols = v_protocols
         
-        self.v_test_duration = 5                       # This value specifies the length of the IPERF Test
+        self.v_test_duration = 600                       # This value specifies the length of the IPERF Test
         
     def iperf_tcp_start (self,c,b,p):
         v_cycle = c
@@ -102,7 +102,9 @@ def proc_iperf():
                 for b in iperf_test.v_bw:
                     print ('--- >> Func1: Starting generating UDP IPERF traffic... ')
                     iperf_test.iperf_udp_start(c+1,b,p)
-
+                    
+    
+    os.system ('killall Python')
         
     return()
 
@@ -125,7 +127,7 @@ class Android_pcap:
         v_prot = p
         
         os.system(
-                f"{self.v_adb_dir}./adb -s NNKS0F0054 shell su 0 'tcpdump -vv -i any host {self.v_mec_sr_ip} -C 10 -w {self.droid_rep}android_{v_prot}_{v_bw}_{self.v_date}_C{v_cycle}.pcap'"
+                f"{self.v_adb_dir}./adb -s NNKS0F0054 shell su 0 'tcpdump -vv -i any host {self.v_mec_sr_ip} -C 100000000 -w {self.droid_rep}android_{v_prot}_{v_bw}_{self.v_date}_C{v_cycle}.pcap'"
                 )
         
         '''
@@ -302,25 +304,35 @@ def adb_rf():
     import warnings
     warnings.simplefilter(action='ignore', category=FutureWarning)
 
+    
     while True:
-        
-        ue_info = adb_ue_info()
-        
-        v_ue_signal = ue_info.f_ue_SignalStrength()
-        
-        v_ue_service = ue_info.f_mServiceState()
-        
-        v_cell_service = ue_info.f_cell_mServiceState()
-        
-        df = pd.concat([v_ue_signal,v_ue_service,v_cell_service], axis=1)
-        
-        df['epoch'] = ue_info.f_epoch_time()
-        
-        print (df)
-        
-        
-        
+            try:
+                ue_info = adb_ue_info()
+
+                v_ue_signal = ue_info.f_ue_SignalStrength()
+
+                v_ue_service = ue_info.f_mServiceState()
+
+                v_cell_service = ue_info.f_cell_mServiceState()
+
+                df = pd.concat([v_ue_signal,v_ue_service,v_cell_service], axis=1)
+
+                df['epoch'] = ue_info.f_epoch_time()
+
+                #print (df)
+
+                if not os.path.isfile (ue_info.adb_dir+'ue_rf_data_adb.csv'):
+                    df.to_csv (ue_info.adb_dir+'ue_rf_data_adb.csv',index=False)
+
+                else:
+                    df.to_csv (ue_info.adb_dir+'ue_rf_data_adb.csv', mode='a', index=False, header=False)
+            except Exception:
+                    break       
+    
+    
     return ()
+
+
 # ==> BEGINNING
 os.system('clear')
 nest_asyncio.apply()
@@ -328,27 +340,18 @@ time.sleep (1)
 
 
 if __name__ == '__main__':
-    #p1 = Process(target=proc_iperf)
-    #p2 = Process(target=proc_pcap)
+    p1 = Process(target=proc_iperf)
+    p2 = Process(target=proc_pcap)
     p3 = Process (target=adb_rf)
     
-    #p1.start()
-    #p2.start()
+    p1.start()
+    p2.start()
     p3.start()
 
-    #p1.join()
-    #p2.join()
+    p1.join()
+    p2.join()
     p3.join()
 
 # ==> END
 
 
-
-
-'''
-
-./adb shell su 0 'tcpdump -vv -i any host 155.146.162.168 -w /storage/emulated/0/Documents/Dreamscape_Pcap/android.pcap'
-"/Users/hcanobra/Documents/GitHub_Repository/GitHub_Could_Projects/Python_GitHub_Work/Python_Dreamscape/NeckBand_proto/./adb shell su 0 'tcpdump -vv -i any host 155.146.162.168 -w  /storage/emulated/0/Documents/Dreamscape_Pcap//android.pcap"
-
-
-'''
