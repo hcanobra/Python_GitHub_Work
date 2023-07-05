@@ -5,7 +5,7 @@ import os
 # ///////// BEGIN 
 os.system('clear')
 
-path = "/Users/canobhu/Documents/GitHub/GitHub/Python_Pcap/iperf3_tcp/"
+path = "/Users/hcanobra/Documents/GitHub_Repository/GitHub_Could_Projects/Python_GitHub_Work/Python_Dreamscape/NeckBand_proto/070123_1st_test/"
 
 username=''
 password=''
@@ -21,7 +21,7 @@ if not password:
     
     
 for file in dir_list:
-    if file.endswith(".pcap"):
+    if file.__contains__("TCP_100M_070123"):
 
         file_name = path+file
         print ("#######################################")
@@ -36,7 +36,7 @@ for file in dir_list:
         
             sftp = ssh.open_sftp()
 
-            sftp.chdir('/home/sftpuser')
+            sftp.chdir('/home/sftpuser/070123_1st_test')
             
             sftp.put(file_name, file)
 

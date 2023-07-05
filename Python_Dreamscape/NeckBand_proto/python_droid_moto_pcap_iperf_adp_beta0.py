@@ -12,7 +12,7 @@ import pandas as pd
 
 def f_global_definitions():
     v_test_cyles = 4
-    v_bw = ['40M','50M','80''100M']
+    v_bw = ['40M','50M','80M','100M']
     v_protocols =  ['TCP','UDP','ICMP']
 
     # Generating Today's lebel	
@@ -36,7 +36,7 @@ class iperf3_test:
         self.v_mec_sr_ip = v_mec_sr_ip
         self.v_protocols = v_protocols
         
-        self.v_test_duration = 600                       # This value specifies the length of the IPERF Test
+        self.v_test_duration = 6                       # This value specifies the length of the IPERF Test
         
     def iperf_tcp_start (self,c,b,p):
         v_cycle = c
