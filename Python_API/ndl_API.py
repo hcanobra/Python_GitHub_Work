@@ -13,7 +13,7 @@ class Connection:
             username = "canobhu"
             #username = input("Username: ")
         if not password:
-            password = "Tpztlan02VH("
+            password = "Tpztlan02VH+"
             #password = getpass("Password: ")
 
         # Parameters used to setup the presto connection with the NDL databases
@@ -26,6 +26,7 @@ class Connection:
             http_scheme='https',
             auth=prestodb.auth.BasicAuthentication(username, password)
         )
+        self.presto_connection._http_session.verify = False
 
         # This is used later to execute queries and such
         self.cursor = self.presto_connection.cursor()
