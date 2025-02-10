@@ -27,7 +27,7 @@ class Connection:
             username = "canobhu"
             #username = input("Username: ")
         if not password:
-            password = "Tpztlan02VH+"
+            password = ""
             #password = getpass("Password: ")
 
         # Parameters used to setup the presto connection with the NDL databases
